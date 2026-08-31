@@ -1,29 +1,29 @@
-# Use the official Node.js runtime as the base image
-FROM node:21 as build
+# Etage de build. Image epinglee par digest : build reproductible et integrite verifiee.
+# Pour la remonter : docker pull node:22, puis relever le nouveau digest.
+FROM node:22@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d AS build
 
-# Set the working directory in the container
 WORKDIR /app
+RUN chown node:node /app
+USER node
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+# Le lockfile fait foi : npm ci echoue si package.json et package-lock.json divergent,
+# et reinstalle exactement les versions verifiees par leur hachage.
+COPY --chown=node:node package.json package-lock.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
+COPY --chown=node:node . .
 
-# Copy the entire application code to the container
-COPY . .
-
-# Build the React app for production
 RUN npm run docker:build
 
-# Use Nginx as the production server
-FROM nginx:alpine
+# Etage final : image nginx OFFICIELLE, epinglee par digest.
+# Choix assume : on prefere une image officielle a une image tierce
+# (nginxinc/nginx-unprivileged). Le durcissement non-root viendra des
+# Docker Hardened Images, une fois l'authentification en place.
+# Pour la remonter : docker buildx imagetools inspect nginx:alpine --format "{{.Manifest.Digest}}"
+FROM nginx:alpine@sha256:db35bfc6b2951e7f8a72db5db120288c127ffaeeb4a6d4b95a26fead017d5913
 
-# Copy the built React app to Nginx's web server directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Expose port 80 for the Nginx server
 EXPOSE 80
 
-# Start Nginx when the container runs
 CMD ["nginx", "-g", "daemon off;"]
