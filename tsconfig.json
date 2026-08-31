@@ -4,9 +4,12 @@
     "paths": {
       "src/*": ["./*"]
     },
+    "rootDir": "./src",
     "outDir": "./dist",
     "noImplicitAny": true,
-    "target": "es6",
+    "target": "es2020",
+    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "types": ["node", "jest", "webpack-env"],
     "jsx": "react-jsx",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
@@ -15,7 +18,8 @@
     "module": "es6",
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "ignoreDeprecations": "6.0"
   },
   "exclude": ["node_modules", "./dist", "./docs"],
   "include": [
