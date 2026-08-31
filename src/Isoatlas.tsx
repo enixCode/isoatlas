@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import { theme } from 'src/styles/theme';
-import { IsoflowProps } from 'src/types';
+import { IsoatlasProps } from 'src/types';
 import { setWindowCursor, modelFromModelStore } from 'src/utils';
 import { useModelStore, ModelProvider } from 'src/stores/modelStore';
 import { SceneProvider } from 'src/stores/sceneStore';
@@ -22,7 +22,7 @@ const App = ({
   enableDebugTools = false,
   editorMode = 'EDITABLE',
   renderer
-}: IsoflowProps) => {
+}: IsoatlasProps) => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
@@ -79,7 +79,7 @@ const App = ({
   );
 };
 
-export const Isoflow = (props: IsoflowProps) => {
+export const Isoatlas = (props: IsoatlasProps) => {
   return (
     <ThemeProvider theme={theme}>
       <ModelProvider>
@@ -93,7 +93,7 @@ export const Isoflow = (props: IsoflowProps) => {
   );
 };
 
-const useIsoflow = () => {
+const useIsoatlas = () => {
   const rendererEl = useUiStateStore((state) => {
     return state.rendererEl;
   });
@@ -113,6 +113,6 @@ const useIsoflow = () => {
   };
 };
 
-export { useIsoflow };
+export { useIsoatlas };
 export * from 'src/standaloneExports';
-export default Isoflow;
+export default Isoatlas;

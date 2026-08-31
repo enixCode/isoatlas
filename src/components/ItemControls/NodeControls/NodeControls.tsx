@@ -19,12 +19,7 @@ interface Props {
   id: string;
 }
 
-const ModeOptions = {
-  SETTINGS: 'SETTINGS',
-  CHANGE_ICON: 'CHANGE_ICON'
-} as const;
-
-type Mode = keyof typeof ModeOptions;
+type Mode = 'SETTINGS' | 'CHANGE_ICON';
 
 export const NodeControls = ({ id }: Props) => {
   const [mode, setMode] = useState<Mode>('SETTINGS');
@@ -54,8 +49,7 @@ export const NodeControls = ({ id }: Props) => {
           <Stack
             direction="row"
             spacing={2}
-            alignItems="flex-end"
-            justifyContent="space-between"
+            sx={{ alignItems: 'flex-end', justifyContent: 'space-between' }}
           >
             <Box
               component="img"

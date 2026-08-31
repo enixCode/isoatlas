@@ -3,7 +3,7 @@ import FileSaver from 'file-saver';
 import { Model, Size } from '../types';
 
 export const generateGenericFilename = (extension: string) => {
-  return `isoflow-export-${new Date().toISOString()}.${extension}`;
+  return `isoatlas-export-${new Date().toISOString()}.${extension}`;
 };
 
 export const base64ToBlob = (

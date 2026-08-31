@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import ReactQuill from 'react-quill';
+import React, { useEffect, useRef } from 'react';
+import { useQuill } from 'react-quilljs';
 import { Box } from '@mui/material';
 
 interface Props {
@@ -19,14 +19,44 @@ export const MarkdownEditor = ({
   height = 120,
   styles
 }: Props) => {
-  const modules = useMemo(() => {
-    if (!readOnly)
-      return {
-        toolbar: tools
-      };
+  const { quill, quillRef } = useQuill({
+    theme: 'snow',
+    readOnly,
+    formats: tools,
+    modules: { toolbar: readOnly ? false : tools }
+  });
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  // Memorise le dernier HTML connu pour ne pas reinjecter ce que l'editeur vient d'emettre.
+  const lastHtml = useRef<string | undefined>(undefined);
 
-    return { toolbar: false };
-  }, [readOnly]);
+  useEffect(() => {
+    if (!quill) return;
+
+    const next = value ?? '';
+
+    if (next === lastHtml.current) return;
+
+    lastHtml.current = next;
+    quill.clipboard.dangerouslyPasteHTML(next, 'silent');
+  }, [quill, value]);
+
+  useEffect(() => {
+    if (!quill) return undefined;
+
+    const onTextChange = () => {
+      const html = quill.root.innerHTML;
+
+      lastHtml.current = html;
+      onChangeRef.current?.(html);
+    };
+
+    quill.on('text-change', onTextChange);
+
+    return () => {
+      quill.off('text-change', onTextChange);
+    };
+  }, [quill]);
 
   return (
     <Box
@@ -53,14 +83,7 @@ export const MarkdownEditor = ({
         }
       }}
     >
-      <ReactQuill
-        theme="snow"
-        value={value ?? ''}
-        readOnly={readOnly}
-        onChange={onChange}
-        formats={tools}
-        modules={modules}
-      />
+      <div ref={quillRef} />
     </Box>
   );
 };

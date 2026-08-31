@@ -1,7 +1,7 @@
 import React from 'react';
-import Isoflow from 'src/Isoflow';
+import Isoatlas from 'src/Isoatlas';
 import { initialData } from '../initialData';
 
 export const BasicEditor = () => {
-  return <Isoflow initialData={{ ...initialData, fitToView: true }} />;
+  return <Isoatlas initialData={{ ...initialData, fitToView: true }} />;
 };

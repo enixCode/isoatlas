@@ -1,10 +1,10 @@
 import React from 'react';
-import Isoflow from 'src/Isoflow';
+import Isoatlas from 'src/Isoatlas';
 import { initialData } from '../initialData';
 
 export const DebugTools = () => {
   return (
-    <Isoflow
+    <Isoatlas
       initialData={{ ...initialData, fitToView: true }}
       enableDebugTools
       height="100%"

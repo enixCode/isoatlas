@@ -7,7 +7,7 @@ export type InitialData = Model & {
   view?: string;
 };
 
-export interface IsoflowProps {
+export interface IsoatlasProps {
   initialData?: InitialData;
   mainMenuOptions?: MainMenuOptions;
   onModelUpdated?: (Model: Model) => void;

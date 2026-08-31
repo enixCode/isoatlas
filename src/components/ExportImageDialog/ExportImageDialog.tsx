@@ -28,7 +28,7 @@ import {
 import { ModelStore } from 'src/types';
 import { useDiagramUtils } from 'src/hooks/useDiagramUtils';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { Isoflow } from 'src/Isoflow';
+import { Isoatlas } from 'src/Isoatlas';
 import { Loader } from 'src/components/Loader/Loader';
 import { customVars } from 'src/styles/theme';
 import { ColorPicker } from 'src/components/ColorSelector/ColorPicker';
@@ -39,8 +39,8 @@ interface Props {
 }
 
 export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
-  const containerRef = useRef<HTMLDivElement>();
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const currentView = useUiStateStore((state) => {
     return state.view;
   });
@@ -144,7 +144,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
                     height: unprojectedBounds.height * quality
                   }}
                 >
-                  <Isoflow
+                  <Isoatlas
                     editorMode="NON_INTERACTIVE"
                     onModelUpdated={exportImage}
                     initialData={{
@@ -173,7 +173,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
               </Box>
             </>
           )}
-          <Stack alignItems="center" spacing={2}>
+          <Stack sx={{ alignItems: 'center' }} spacing={2}>
             {imageData && (
               <Box
                 component="img"
@@ -217,7 +217,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
               </Box>
             </Box>
             {imageData && (
-              <Stack sx={{ width: '100%' }} alignItems="flex-end">
+              <Stack sx={{ width: '100%', alignItems: 'flex-end' }}>
                 <Stack direction="row" spacing={2}>
                   <Button variant="text" onClick={onClose}>
                     Cancel

@@ -35,17 +35,18 @@ export const IconCollection = ({
         }}
       >
         <Stack
-          sx={{ width: '100%' }}
+          sx={{
+            width: '100%',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
           direction="row"
           spacing={2}
-          justifyContent="space-between"
-          alignItems="center"
         >
           <Typography
             variant="body2"
             color="text.secondary"
-            textTransform="uppercase"
-            fontWeight={600}
+            sx={{ textTransform: 'uppercase', fontWeight: 600 }}
           >
             {id}
           </Typography>

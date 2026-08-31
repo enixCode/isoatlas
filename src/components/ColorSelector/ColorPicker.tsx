@@ -6,7 +6,7 @@ import {
 import React from 'react';
 import { ColorSwatch } from './ColorSwatch';
 
-interface Props extends Omit<MuiColorInputProps, 'ref'> {}
+type Props = Omit<MuiColorInputProps, 'ref'>;
 
 const ColorButtonElement = ({ bgColor, onClick }: MuiColorButtonProps) => {
   return <ColorSwatch hex={bgColor} onClick={onClick} />;
@@ -19,7 +19,7 @@ export const ColorPicker = ({ value, onChange }: Props) => {
       format="hex"
       value={value}
       onChange={onChange}
-      InputProps={{ disableUnderline: true, type: 'hidden' }}
+      slotProps={{ input: { disableUnderline: true, type: 'hidden' } }}
       Adornment={ColorButtonElement}
     />
   );

@@ -17,16 +17,11 @@ import { useScene } from 'src/hooks/useScene';
 import { useModelStore } from 'src/stores/modelStore';
 import { ExportImageDialog } from '../ExportImageDialog/ExportImageDialog';
 
-const ToolsEnum = {
-  MAIN_MENU: 'MAIN_MENU',
-  ZOOM_CONTROLS: 'ZOOM_CONTROLS',
-  TOOL_MENU: 'TOOL_MENU',
-  ITEM_CONTROLS: 'ITEM_CONTROLS',
-  VIEW_TITLE: 'VIEW_TITLE'
-} as const;
+type Tool =
+  'MAIN_MENU' | 'ZOOM_CONTROLS' | 'TOOL_MENU' | 'ITEM_CONTROLS' | 'VIEW_TITLE';
 
 interface EditorModeMapping {
-  [k: string]: (keyof typeof ToolsEnum)[];
+  [k: string]: Tool[];
 }
 
 const EDITOR_MODE_MAPPING: EditorModeMapping = {
@@ -49,7 +44,7 @@ const getEditorModeMapping = (editorMode: keyof typeof EditorModeEnum) => {
 
 export const UiOverlay = () => {
   const theme = useTheme();
-  const contextMenuAnchorRef = useRef();
+  const contextMenuAnchorRef = useRef<HTMLDivElement>(null);
   const { appPadding } = theme.customVars;
   const spacing = useCallback(
     (multiplier: number) => {
@@ -189,12 +184,12 @@ export const UiOverlay = () => {
                 height: '100%'
               }}
             >
-              <Stack direction="row" alignItems="center">
-                <Typography fontWeight={600} color="text.secondary">
+              <Stack direction="row" sx={{ alignItems: 'center' }}>
+                <Typography sx={{ fontWeight: 600 }} color="text.secondary">
                   {title}
                 </Typography>
                 <ChevronRight />
-                <Typography fontWeight={600} color="text.secondary">
+                <Typography sx={{ fontWeight: 600 }} color="text.secondary">
                   {currentView.name}
                 </Typography>
               </Stack>
@@ -236,7 +231,9 @@ export const UiOverlay = () => {
 
       <SceneLayer>
         <Box ref={contextMenuAnchorRef} />
-        <ContextMenuManager anchorEl={contextMenuAnchorRef.current} />
+        <ContextMenuManager
+          anchorEl={contextMenuAnchorRef.current ?? undefined}
+        />
       </SceneLayer>
     </>
   );

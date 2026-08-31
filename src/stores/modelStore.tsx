@@ -1,5 +1,6 @@
 import React, { createContext, useRef, useContext } from 'react';
-import { createStore, useStore } from 'zustand';
+import { createStore } from 'zustand';
+import { useStoreWithEqualityFn } from 'zustand/traditional';
 import { ModelStore } from 'src/types';
 import { INITIAL_DATA } from 'src/config';
 
@@ -26,7 +27,9 @@ interface ProviderProps {
 // TODO: Typings below are pretty gnarly due to the way Zustand works.
 // see https://github.com/pmndrs/zustand/discussions/1180#discussioncomment-3439061
 export const ModelProvider = ({ children }: ProviderProps) => {
-  const storeRef = useRef<ReturnType<typeof initialState>>();
+  const storeRef = useRef<ReturnType<typeof initialState> | undefined>(
+    undefined
+  );
 
   if (!storeRef.current) {
     storeRef.current = initialState();
@@ -49,7 +52,7 @@ export function useModelStore<T>(
     throw new Error('Missing provider in the tree');
   }
 
-  const value = useStore(store, selector, equalityFn);
+  const value = useStoreWithEqualityFn(store, selector, equalityFn);
 
   return value;
 }
