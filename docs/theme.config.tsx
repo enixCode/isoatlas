@@ -12,15 +12,18 @@ export default {
           fontSize: '1.2em'
         }}
       >
-        Isoflow Developer Documentation
+        Isoatlas Developer Documentation
       </span>
     );
+  },
+  head: () => {
+    return <link rel="icon" type="image/svg+xml" href="/favicon.svg" />;
   },
   nextThemes: {
     defaultTheme: 'light'
   },
   project: {
-    link: 'https://github.com/markmanx/isoflow'
+    link: 'https://github.com/enixCode/isoatlas'
   },
   feedback: {
     content: null
