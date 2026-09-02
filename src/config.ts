@@ -71,7 +71,10 @@ export const RECTANGLE_DEFAULTS: Required<
 
 export const ZOOM_INCREMENT = 0.2;
 export const MIN_ZOOM = 0.2;
-export const MAX_ZOOM = 1;
+export const MAX_ZOOM = 2;
+// Applied to wheel deltaY. A mouse notch sends ~100, a trackpad sends dozens of
+// events of 1 to 10; the exponential curve absorbs both scales.
+export const ZOOM_SENSITIVITY = 0.002;
 export const TRANSFORM_ANCHOR_SIZE = 30;
 export const TRANSFORM_CONTROLS_COLOR = '#0392ff';
 export const INITIAL_DATA: InitialData = {

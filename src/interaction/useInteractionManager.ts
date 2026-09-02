@@ -154,11 +154,25 @@ export const useInteractionManager = () => {
     };
 
     const onScroll = (e: WheelEvent) => {
-      if (e.deltaY > 0) {
-        uiState.actions.decrementZoom();
-      } else {
-        uiState.actions.incrementZoom();
-      }
+      // A trackpad pinch arrives as a wheel event with ctrlKey, which the
+      // browser also turns into a page zoom. Without this, both zooms apply.
+      e.preventDefault();
+
+      if (!uiState.rendererEl) return;
+
+      const bounds = uiState.rendererEl.getBoundingClientRect();
+
+      uiState.actions.zoomBy(e.deltaY, {
+        x: e.clientX - (bounds.left + bounds.width / 2),
+        y: e.clientY - (bounds.top + bounds.height / 2)
+      });
+    };
+
+    // The UI overlay is a sibling of the renderer, so a pinch over a panel never
+    // reaches onScroll and the browser zooms its own page instead. Plain scroll
+    // events are left alone so the panels keep scrolling.
+    const onPinch = (e: WheelEvent) => {
+      if (e.ctrlKey) e.preventDefault();
     };
 
     el.addEventListener('mousemove', onMouseEvent);
@@ -168,7 +182,9 @@ export const useInteractionManager = () => {
     el.addEventListener('touchstart', onTouchStart);
     el.addEventListener('touchmove', onTouchMove);
     el.addEventListener('touchend', onTouchEnd);
-    uiState.rendererEl?.addEventListener('wheel', onScroll);
+    // passive: false is required, otherwise preventDefault above is ignored.
+    uiState.rendererEl?.addEventListener('wheel', onScroll, { passive: false });
+    window.addEventListener('wheel', onPinch, { passive: false });
 
     return () => {
       el.removeEventListener('mousemove', onMouseEvent);
@@ -179,6 +195,7 @@ export const useInteractionManager = () => {
       el.removeEventListener('touchmove', onTouchMove);
       el.removeEventListener('touchend', onTouchEnd);
       uiState.rendererEl?.removeEventListener('wheel', onScroll);
+      window.removeEventListener('wheel', onPinch);
     };
   }, [
     uiState.editorMode,

@@ -157,6 +157,7 @@ export interface UiStateActions {
   setMode: (mode: Mode) => void;
   incrementZoom: () => void;
   decrementZoom: () => void;
+  zoomBy: (deltaY: number, pointer: Coords) => void;
   setIsMainMenuOpen: (isOpen: boolean) => void;
   setDialog: (dialog: keyof typeof DialogTypeEnum | null) => void;
   setZoom: (zoom: number) => void;

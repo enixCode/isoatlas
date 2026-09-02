@@ -4,10 +4,16 @@ import {
   CoordsUtils,
   incrementZoom,
   decrementZoom,
-  getStartingMode
+  getStartingMode,
+  clamp
 } from 'src/utils';
 import { UiStateStore } from 'src/types';
-import { INITIAL_UI_STATE } from 'src/config';
+import {
+  INITIAL_UI_STATE,
+  MIN_ZOOM,
+  MAX_ZOOM,
+  ZOOM_SENSITIVITY
+} from 'src/config';
 
 const initialState = () => {
   return createStore<UiStateStore>((set, get) => {
@@ -70,6 +76,28 @@ const initialState = () => {
         decrementZoom: () => {
           const { zoom } = get();
           set({ zoom: decrementZoom(zoom) });
+        },
+        // `pointer` is relative to the renderer centre, where SceneLayers anchor.
+        zoomBy: (deltaY, pointer) => {
+          const { zoom, scroll } = get();
+          const newZoom = clamp(
+            zoom * Math.exp(-deltaY * ZOOM_SENSITIVITY),
+            MIN_ZOOM,
+            MAX_ZOOM
+          );
+          // Keep the point under the pointer fixed by translating by the same ratio.
+          const ratio = newZoom / zoom;
+
+          set({
+            zoom: newZoom,
+            scroll: {
+              ...scroll,
+              position: {
+                x: pointer.x * (1 - ratio) + scroll.position.x * ratio,
+                y: pointer.y * (1 - ratio) + scroll.position.y * ratio
+              }
+            }
+          });
         },
         setZoom: (zoom) => {
           set({ zoom });
