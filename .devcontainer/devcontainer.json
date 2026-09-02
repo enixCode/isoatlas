@@ -1,13 +1,23 @@
 {
   "name": "isoatlas",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
-  "postCreateCommand": "npm ci",
   "remoteUser": "node",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
   "forwardPorts": [3000, 3002],
   "portsAttributes": {
     "3000": { "label": "Isoatlas" },
     "3002": { "label": "Docs" }
   },
+  "mounts": [
+    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=${localWorkspaceFolderBasename}-docs-node_modules,target=${containerWorkspaceFolder}/docs/node_modules,type=volume",
+    "source=${localWorkspaceFolderBasename}-claude,target=/home/node/.claude,type=volume",
+    "source=${localWorkspaceFolderBasename}-gh,target=/home/node/.config/gh,type=volume"
+  ],
+  "postCreateCommand": "sudo chown node node_modules docs/node_modules /home/node/.claude /home/node/.config/gh && npm install",
   "customizations": {
     "vscode": {
       "extensions": [
