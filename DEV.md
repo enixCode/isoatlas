@@ -28,6 +28,7 @@ Le rechargement est automatique à chaque sauvegarde de fichier.
 | `npm run lint:fix` | Corrige automatiquement ce qui peut l'être |
 | `npm run build` | Compile la bibliothèque dans `dist/` |
 | `npm run docker:build` | Compile l'application autonome pour Docker |
+| `npm run pages:build` | Compile la démo publiée sur GitHub Pages |
 
 Avant de pousser du code, lance `npm run lint` puis `npm test`. C'est
 exactement ce que la CI vérifiera.
