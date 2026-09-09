@@ -17,7 +17,8 @@
     "test": "jest",
     "lint": "tsc --noEmit && eslint src",
     "lint:fix": "eslint src --fix",
-    "docker:build": "webpack --config ./webpack/docker.config.js"
+    "docker:build": "webpack --config ./webpack/docker.config.js",
+    "pages:build": "webpack --config ./webpack/pages.config.js"
   },
   "devDependencies": {
     "@isoflow/isopacks": "^0.0.10",
