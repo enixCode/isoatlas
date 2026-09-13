@@ -57,6 +57,7 @@ describe('Model item reducers works correctly', () => {
       getItemByIdOrThrow(newState.model.items, nodeId);
     };
 
-    expect(deletedItem).toThrow();
+    expect(deletedItem).toThrow('not found');
+    expect(newState.model.items).toHaveLength(modelFixture.items.length - 1);
   });
 });
