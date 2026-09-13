@@ -216,7 +216,7 @@ export const UiOverlay = () => {
       </Box>
 
       {mode.type === 'PLACE_ICON' && mode.id && (
-        <SceneLayer disableAnimation>
+        <SceneLayer>
           <DragAndDrop iconId={mode.id} tile={mouse.position.tile} />
         </SceneLayer>
       )}

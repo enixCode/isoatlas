@@ -99,6 +99,19 @@ const initialState = () => {
             }
           });
         },
+        scrollBy: (delta) => {
+          const { scroll } = get();
+
+          set({
+            scroll: {
+              ...scroll,
+              position: {
+                x: scroll.position.x + delta.x,
+                y: scroll.position.y + delta.y
+              }
+            }
+          });
+        },
         setZoom: (zoom) => {
           set({ zoom });
         },
