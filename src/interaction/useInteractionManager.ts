@@ -158,13 +158,37 @@ export const useInteractionManager = () => {
       // browser also turns into a page zoom. Without this, both zooms apply.
       e.preventDefault();
 
+      // Keep this guard BEFORE getBoundingClientRect: TypeScript refuses to
+      // read a property on an element that may be null.
       if (!uiState.rendererEl) return;
 
       const bounds = uiState.rendererEl.getBoundingClientRect();
 
-      uiState.actions.zoomBy(e.deltaY, {
-        x: e.clientX - (bounds.left + bounds.width / 2),
-        y: e.clientY - (bounds.top + bounds.height / 2)
+      // Firefox reports the wheel in lines where Chrome reports pixels.
+      // Without this factor the gesture is about 16 times too small on Firefox.
+      let scale = 1;
+      if (e.deltaMode === 1) scale = 16;
+      if (e.deltaMode === 2) scale = bounds.height;
+
+      // Pinching is the only gesture that zooms, like Excalidraw: the browser
+      // flags it with ctrlKey. metaKey covers cmd + wheel on a Mac mouse.
+      if (e.ctrlKey || e.metaKey) {
+        uiState.actions.zoomBy(e.deltaY * scale, {
+          x: e.clientX - (bounds.left + bounds.width / 2),
+          y: e.clientY - (bounds.top + bounds.height / 2)
+        });
+
+        return;
+      }
+
+      // Shift turns a vertical wheel into a horizontal pan, but a trackpad
+      // already fills deltaX on its own when sliding sideways.
+      const isShiftPan = e.shiftKey && e.deltaX === 0;
+
+      // The sign is flipped: sliding down must move the content up.
+      uiState.actions.scrollBy({
+        x: -(isShiftPan ? e.deltaY : e.deltaX) * scale,
+        y: -(isShiftPan ? 0 : e.deltaY) * scale
       });
     };
 

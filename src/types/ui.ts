@@ -161,6 +161,7 @@ export interface UiStateActions {
   setIsMainMenuOpen: (isOpen: boolean) => void;
   setDialog: (dialog: keyof typeof DialogTypeEnum | null) => void;
   setZoom: (zoom: number) => void;
+  scrollBy: (delta: Coords) => void;
   setScroll: (scroll: Scroll) => void;
   setItemControls: (itemControls: ItemControls | null) => void;
   setContextMenu: (contextMenu: ContextMenu | null) => void;

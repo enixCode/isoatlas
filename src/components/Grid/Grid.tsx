@@ -29,12 +29,14 @@ export const Grid = () => {
       height: elSize.height / 2 + scroll.position.y
     };
 
-    gsap.to(elementRef.current, {
-      duration: isFirstRender ? 0 : 0.25,
+    gsap.set(elementRef.current, {
       backgroundSize: `${tileSize.width}px ${tileSize.height * 2}px`,
       backgroundPosition: `${backgroundPosition.width}px ${backgroundPosition.height}px`
     });
 
+    // No longer about animation: this second render is what finally hands
+    // useResizeObserver an element (elementRef.current is null on the first
+    // render). Without it, the grid does not realign when the window resizes.
     if (isFirstRender) {
       setIsFirstRender(false);
     }
