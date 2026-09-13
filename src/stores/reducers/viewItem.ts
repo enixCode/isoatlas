@@ -4,6 +4,7 @@ import { getItemByIdOrThrow, getConnectorsByViewItem } from 'src/utils';
 import { validateView } from 'src/schemas/validation';
 import { State, ViewReducerContext } from './types';
 import * as reducers from './view';
+import { deleteModelItem } from './modelItem';
 
 export const updateViewItem = (
   { id, ...updates }: { id: string } & Partial<ViewItem>,
@@ -92,6 +93,18 @@ export const deleteViewItem = (
       updatedConnectors.model.views[view.index].connectors;
 
     draft.scene.connectors = updatedConnectors.scene.connectors;
+
+    const isStillPlaced = draft.model.views.some((otherView) => {
+      return otherView.items.some((item) => {
+        return item.id === id;
+      });
+    });
+
+    if (!isStillPlaced) {
+      const stateAfterDelete = deleteModelItem(id, draft);
+
+      draft.model.items = stateAfterDelete.model.items;
+    }
   });
 
   return newState;
