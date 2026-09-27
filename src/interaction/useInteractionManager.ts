@@ -42,18 +42,26 @@ const getModeFunction = (mode: ModeActions, e: SlimMouseEvent) => {
 export const useInteractionManager = () => {
   const rendererRef = useRef<HTMLElement>(null);
   const reducerTypeRef = useRef<string | undefined>(undefined);
-  const uiState = useUiStateStore((state) => {
-    return state;
+  const uiStateActions = useUiStateStore((state) => {
+    return state.actions;
+  });
+  const rendererEl = useUiStateStore((state) => {
+    return state.rendererEl;
+  });
+  const modeType = useUiStateStore((state) => {
+    return state.mode.type;
   });
   const model = useModelStore((state) => {
     return state;
   });
   const scene = useScene();
-  const { size: rendererSize } = useResizeObserver(uiState.rendererEl);
+  const { size: rendererSize } = useResizeObserver(rendererEl);
 
   const onMouseEvent = useCallback(
     (e: SlimMouseEvent) => {
       if (!rendererRef.current) return;
+
+      const uiState = uiStateActions.get();
 
       const mode = modes[uiState.mode.type];
       const modeFunction = getModeFunction(mode, e);
@@ -97,12 +105,14 @@ export const useInteractionManager = () => {
       modeFunction(baseState);
       reducerTypeRef.current = uiState.mode.type;
     },
-    [model, scene, uiState, rendererSize]
+    [model, scene, uiStateActions, rendererSize]
   );
 
   const onContextMenu = useCallback(
     (e: SlimMouseEvent) => {
       e.preventDefault();
+
+      const uiState = uiStateActions.get();
 
       const itemAtTile = getItemAtTile({
         tile: uiState.mouse.position.tile,
@@ -118,11 +128,11 @@ export const useInteractionManager = () => {
         uiState.actions.setContextMenu(null);
       }
     },
-    [uiState.mouse, scene, uiState.contextMenu, uiState.actions]
+    [scene, uiStateActions]
   );
 
   useEffect(() => {
-    if (uiState.mode.type === 'INTERACTIONS_DISABLED') return;
+    if (modeType === 'INTERACTIONS_DISABLED') return;
 
     const el = window;
 
@@ -160,9 +170,9 @@ export const useInteractionManager = () => {
 
       // Keep this guard BEFORE getBoundingClientRect: TypeScript refuses to
       // read a property on an element that may be null.
-      if (!uiState.rendererEl) return;
+      if (!rendererEl) return;
 
-      const bounds = uiState.rendererEl.getBoundingClientRect();
+      const bounds = rendererEl.getBoundingClientRect();
 
       // Firefox reports the wheel in lines where Chrome reports pixels.
       // Without this factor the gesture is about 16 times too small on Firefox.
@@ -173,7 +183,7 @@ export const useInteractionManager = () => {
       // Pinching is the only gesture that zooms, like Excalidraw: the browser
       // flags it with ctrlKey. metaKey covers cmd + wheel on a Mac mouse.
       if (e.ctrlKey || e.metaKey) {
-        uiState.actions.zoomBy(e.deltaY * scale, {
+        uiStateActions.zoomBy(e.deltaY * scale, {
           x: e.clientX - (bounds.left + bounds.width / 2),
           y: e.clientY - (bounds.top + bounds.height / 2)
         });
@@ -186,7 +196,7 @@ export const useInteractionManager = () => {
       const isShiftPan = e.shiftKey && e.deltaX === 0;
 
       // The sign is flipped: sliding down must move the content up.
-      uiState.actions.scrollBy({
+      uiStateActions.scrollBy({
         x: -(isShiftPan ? e.deltaY : e.deltaX) * scale,
         y: -(isShiftPan ? 0 : e.deltaY) * scale
       });
@@ -207,7 +217,7 @@ export const useInteractionManager = () => {
     el.addEventListener('touchmove', onTouchMove);
     el.addEventListener('touchend', onTouchEnd);
     // passive: false is required, otherwise preventDefault above is ignored.
-    uiState.rendererEl?.addEventListener('wheel', onScroll, { passive: false });
+    rendererEl?.addEventListener('wheel', onScroll, { passive: false });
     window.addEventListener('wheel', onPinch, { passive: false });
 
     return () => {
@@ -218,17 +228,10 @@ export const useInteractionManager = () => {
       el.removeEventListener('touchstart', onTouchStart);
       el.removeEventListener('touchmove', onTouchMove);
       el.removeEventListener('touchend', onTouchEnd);
-      uiState.rendererEl?.removeEventListener('wheel', onScroll);
+      rendererEl?.removeEventListener('wheel', onScroll);
       window.removeEventListener('wheel', onPinch);
     };
-  }, [
-    uiState.editorMode,
-    onMouseEvent,
-    uiState.mode.type,
-    onContextMenu,
-    uiState.actions,
-    uiState.rendererEl
-  ]);
+  }, [onMouseEvent, modeType, onContextMenu, uiStateActions, rendererEl]);
 
   const setInteractionsElement = useCallback((element: HTMLElement) => {
     rendererRef.current = element;
