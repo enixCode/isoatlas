@@ -149,6 +149,7 @@ export interface UiState {
 }
 
 export interface UiStateActions {
+  get: () => UiStateStore;
   setView: (view: string) => void;
   setMainMenuOptions: (options: MainMenuOptions) => void;
   setEditorMode: (mode: keyof typeof EditorModeEnum) => void;

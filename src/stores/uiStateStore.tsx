@@ -37,6 +37,7 @@ const initialState = () => {
       itemControls: null,
       enableDebugTools: false,
       actions: {
+        get,
         setView: (view) => {
           set({ view });
         },
