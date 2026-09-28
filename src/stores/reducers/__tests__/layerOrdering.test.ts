@@ -22,6 +22,10 @@ const getModel = () => {
         to: { x: 1, y: 1 }
       }
     ];
+    draft.views[0].textBoxes = [
+      { id: 'textBox1', tile: { x: 0, y: 0 }, content: 'One' },
+      { id: 'textBox2', tile: { x: 1, y: 1 }, content: 'Two' }
+    ];
   });
 };
 
@@ -117,5 +121,71 @@ describe('Layer ordering reducers works correctly', () => {
     });
 
     expect(result.model.views[0].rectangles?.[2].id).toBe('rect1');
+  });
+
+  test('Brings a connector to front correctly', () => {
+    const model = getModel();
+    const item: ItemReference = {
+      type: 'CONNECTOR',
+      id: 'connector2'
+    };
+
+    const result = reducers.view({
+      action: 'CHANGE_LAYER_ORDER',
+      payload: {
+        action: 'BRING_TO_FRONT',
+        item
+      },
+      ctx: {
+        viewId: 'view1',
+        state: { model, scene }
+      }
+    });
+
+    expect(result.model.views[0].connectors?.[0].id).toBe('connector2');
+  });
+
+  test('Sends a text box to back correctly', () => {
+    const model = getModel();
+    const item: ItemReference = {
+      type: 'TEXTBOX',
+      id: 'textBox1'
+    };
+
+    const result = reducers.view({
+      action: 'CHANGE_LAYER_ORDER',
+      payload: {
+        action: 'SEND_TO_BACK',
+        item
+      },
+      ctx: {
+        viewId: 'view1',
+        state: { model, scene }
+      }
+    });
+
+    expect(result.model.views[0].textBoxes?.[1].id).toBe('textBox1');
+  });
+
+  test('Refuses to reorder an unsupported item type', () => {
+    const model = getModel();
+    const item: ItemReference = {
+      type: 'CONNECTOR_ANCHOR',
+      id: 'anch1-1'
+    };
+
+    expect(() => {
+      return reducers.view({
+        action: 'CHANGE_LAYER_ORDER',
+        payload: {
+          action: 'BRING_TO_FRONT',
+          item
+        },
+        ctx: {
+          viewId: 'view1',
+          state: { model, scene }
+        }
+      });
+    }).toThrow('Cannot reorder an item of type CONNECTOR_ANCHOR');
   });
 });

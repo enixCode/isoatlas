@@ -1,5 +1,5 @@
 import { produce } from 'immer';
-import { ItemReference, LayerOrderingAction, View } from 'src/types';
+import { ItemReference, LayerOrderingAction } from 'src/types';
 import { getItemByIdOrThrow } from 'src/utils';
 import { State, ViewReducerContext } from './types';
 
@@ -9,14 +9,22 @@ export const changeLayerOrder = (
 ): State => {
   const newState = produce(state, (draft) => {
     const view = getItemByIdOrThrow(draft.model.views, viewId);
-    let arr: View['rectangles'];
+    // The three arrays are only read through their id here, so the common
+    // shape is enough and spares a union that splice would reject.
+    let arr: { id: string }[];
 
     switch (item.type) {
       case 'RECTANGLE':
         arr = view.value.rectangles ?? [];
         break;
+      case 'CONNECTOR':
+        arr = view.value.connectors ?? [];
+        break;
+      case 'TEXTBOX':
+        arr = view.value.textBoxes ?? [];
+        break;
       default:
-        throw new Error('Invalid item type');
+        throw new Error(`Cannot reorder an item of type ${item.type}`);
     }
 
     const target = getItemByIdOrThrow(arr, item.id);
