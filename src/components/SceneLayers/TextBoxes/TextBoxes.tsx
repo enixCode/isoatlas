@@ -6,7 +6,7 @@ interface Props {
   textBoxes: ReturnType<typeof useScene>['textBoxes'];
 }
 
-export const TextBoxes = ({ textBoxes }: Props) => {
+const TextBoxesBase = ({ textBoxes }: Props) => {
   return (
     <>
       {[...textBoxes].reverse().map((textBox) => {
@@ -15,3 +15,5 @@ export const TextBoxes = ({ textBoxes }: Props) => {
     </>
   );
 };
+
+export const TextBoxes = React.memo(TextBoxesBase);

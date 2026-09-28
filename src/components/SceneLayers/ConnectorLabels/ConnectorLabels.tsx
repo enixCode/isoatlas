@@ -6,7 +6,7 @@ interface Props {
   connectors: ReturnType<typeof useScene>['connectors'];
 }
 
-export const ConnectorLabels = ({ connectors }: Props) => {
+const ConnectorLabelsBase = ({ connectors }: Props) => {
   return (
     <>
       {connectors
@@ -19,3 +19,5 @@ export const ConnectorLabels = ({ connectors }: Props) => {
     </>
   );
 };
+
+export const ConnectorLabels = React.memo(ConnectorLabelsBase);

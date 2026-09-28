@@ -7,7 +7,7 @@ interface Props {
   connectors: ReturnType<typeof useScene>['connectors'];
 }
 
-export const Connectors = ({ connectors }: Props) => {
+const ConnectorsBase = ({ connectors }: Props) => {
   const itemControls = useUiStateStore((state) => {
     return state.itemControls;
   });
@@ -41,3 +41,5 @@ export const Connectors = ({ connectors }: Props) => {
     </>
   );
 };
+
+export const Connectors = React.memo(ConnectorsBase);

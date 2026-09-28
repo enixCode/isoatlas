@@ -6,7 +6,7 @@ interface Props {
   nodes: ViewItem[];
 }
 
-export const Nodes = ({ nodes }: Props) => {
+const NodesBase = ({ nodes }: Props) => {
   return (
     <>
       {[...nodes].reverse().map((node) => {
@@ -17,3 +17,5 @@ export const Nodes = ({ nodes }: Props) => {
     </>
   );
 };
+
+export const Nodes = React.memo(NodesBase);

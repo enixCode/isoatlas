@@ -51,8 +51,8 @@ export const useInteractionManager = () => {
   const modeType = useUiStateStore((state) => {
     return state.mode.type;
   });
-  const model = useModelStore((state) => {
-    return state;
+  const modelActions = useModelStore((state) => {
+    return state.actions;
   });
   const scene = useScene();
   const { size: rendererSize } = useResizeObserver(rendererEl);
@@ -80,7 +80,7 @@ export const useInteractionManager = () => {
       uiState.actions.setMouse(nextMouse);
 
       const baseState: State = {
-        model,
+        model: modelActions.get(),
         scene,
         uiState,
         rendererRef: rendererRef.current,
@@ -105,7 +105,7 @@ export const useInteractionManager = () => {
       modeFunction(baseState);
       reducerTypeRef.current = uiState.mode.type;
     },
-    [model, scene, uiStateActions, rendererSize]
+    [modelActions, scene, uiStateActions, rendererSize]
   );
 
   const onContextMenu = useCallback(

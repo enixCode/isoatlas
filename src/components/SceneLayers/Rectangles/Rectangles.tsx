@@ -6,7 +6,7 @@ interface Props {
   rectangles: ReturnType<typeof useScene>['rectangles'];
 }
 
-export const Rectangles = ({ rectangles }: Props) => {
+const RectanglesBase = ({ rectangles }: Props) => {
   return (
     <>
       {[...rectangles].reverse().map((rectangle) => {
@@ -15,3 +15,5 @@ export const Rectangles = ({ rectangles }: Props) => {
     </>
   );
 };
+
+export const Rectangles = React.memo(RectanglesBase);
