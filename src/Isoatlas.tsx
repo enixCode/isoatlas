@@ -12,6 +12,7 @@ import { UiOverlay } from 'src/components/UiOverlay/UiOverlay';
 import { UiStateProvider, useUiStateStore } from 'src/stores/uiStateStore';
 import { INITIAL_DATA, MAIN_MENU_OPTIONS } from 'src/config';
 import { useInitialDataManager } from 'src/hooks/useInitialDataManager';
+import { ErrorBoundary } from 'src/components/ErrorBoundary/ErrorBoundary';
 
 const App = ({
   initialData,
@@ -81,15 +82,17 @@ const App = ({
 
 export const Isoatlas = (props: IsoatlasProps) => {
   return (
-    <ThemeProvider theme={theme}>
-      <ModelProvider>
-        <SceneProvider>
-          <UiStateProvider>
-            <App {...props} />
-          </UiStateProvider>
-        </SceneProvider>
-      </ModelProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <ModelProvider>
+          <SceneProvider>
+            <UiStateProvider>
+              <App {...props} />
+            </UiStateProvider>
+          </SceneProvider>
+        </ModelProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 };
 
