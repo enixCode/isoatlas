@@ -10,6 +10,14 @@ import { getAllAnchors, getItemByIdOrThrow } from 'src/utils';
 
 type IssueType =
   | {
+      type: 'CYCLIC_ANCHOR_TO_ANCHOR_REF';
+      params: {
+        anchor: string;
+        view: string;
+        connector: string;
+      };
+    }
+  | {
       type: 'INVALID_ANCHOR_TO_VIEW_ITEM_REF';
       params: {
         anchor: string;
@@ -77,6 +85,30 @@ type Issue = IssueType & {
   message: string;
 };
 
+// getAnchorTile resolves ref.anchor recursively, so a chain that comes back on
+// itself overflows the call stack before anything reaches the screen.
+const anchorChainLoops = (
+  anchor: ConnectorAnchor,
+  allAnchors: ConnectorAnchor[]
+): boolean => {
+  const seen = new Set([anchor.id]);
+  let next = anchor.ref.anchor;
+
+  while (next) {
+    if (seen.has(next)) return true;
+    seen.add(next);
+
+    const currentId = next;
+    const target = allAnchors.find(({ id }) => {
+      return id === currentId;
+    });
+
+    next = target?.ref.anchor;
+  }
+
+  return false;
+};
+
 export const validateConnectorAnchor = (
   anchor: ConnectorAnchor,
   ctx: {
@@ -136,6 +168,17 @@ export const validateConnectorAnchor = (
         },
         message:
           'Connector includes an anchor that references another connector anchor that does not exist in this view.'
+      });
+    } else if (anchorChainLoops(anchor, ctx.allAnchors)) {
+      issues.push({
+        type: 'CYCLIC_ANCHOR_TO_ANCHOR_REF',
+        params: {
+          anchor: anchor.id,
+          view: ctx.view.id,
+          connector: ctx.connector.id
+        },
+        message:
+          'Connector includes an anchor whose reference chain loops back on itself.'
       });
     }
   }

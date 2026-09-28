@@ -64,6 +64,25 @@ describe('Model validation works correctly', () => {
     expect(issues[0].type).toStrictEqual('INVALID_ANCHOR_TO_ANCHOR_REF');
   });
 
+  test('Connector with anchors that reference each other fails validation', () => {
+    const cyclicConnector: Connector = {
+      id: 'cyclicConnector',
+      color: 'color1',
+      anchors: [
+        { id: 'cyclicAnch1', ref: { anchor: 'cyclicAnch2' } },
+        { id: 'cyclicAnch2', ref: { anchor: 'cyclicAnch1' } }
+      ]
+    };
+
+    const model = produce(modelFixture, (draft) => {
+      draft.views[0].connectors?.push(cyclicConnector);
+    });
+
+    const issues = validateModel(model);
+
+    expect(issues[0].type).toStrictEqual('CYCLIC_ANCHOR_TO_ANCHOR_REF');
+  });
+
   test('An invalid view item fails validation', () => {
     const invalidItem: ViewItem = {
       id: 'invalidItem',
