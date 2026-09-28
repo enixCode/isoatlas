@@ -1,11 +1,16 @@
 import { z } from 'zod';
 
+// A tile coordinate ends up sizing the pathfinder grid, and that cost grows
+// with the square of the span between two anchors. Unbounded, two integers in
+// an imported file ask for a grid of billions of cells and take the tab down.
+const tileCoord = z.number().min(-1000).max(1000);
+
 export const coords = z.object({
-  x: z.number(),
-  y: z.number()
+  x: tileCoord,
+  y: tileCoord
 });
 
-export const id = z.string();
+export const id = z.string().min(1).max(100);
 export const color = z.string();
 
 export const constrainedStrings = {
