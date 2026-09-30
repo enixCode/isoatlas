@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
-import { ModeActions, State, SlimMouseEvent } from 'src/types';
+import { ModeActions, State, SlimMouseEvent, Mode } from 'src/types';
 import { getMouse, getItemAtTile } from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
 import { useScene } from 'src/hooks/useScene';
@@ -26,6 +26,10 @@ const modes: { [k in string]: ModeActions } = {
   TEXTBOX: TextBox
 };
 
+// MouseEvent.button: 0 = left, 1 = middle, 2 = right
+
+const MIDDLE_MOUSE_BUTTON = 1;
+
 const getModeFunction = (mode: ModeActions, e: SlimMouseEvent) => {
   switch (e.type) {
     case 'mousemove':
@@ -42,6 +46,7 @@ const getModeFunction = (mode: ModeActions, e: SlimMouseEvent) => {
 export const useInteractionManager = () => {
   const rendererRef = useRef<HTMLElement>(null);
   const reducerTypeRef = useRef<string | undefined>(undefined);
+  const middlePanReturnModeRef = useRef<Mode | null>(null);
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
@@ -61,9 +66,27 @@ export const useInteractionManager = () => {
     (e: SlimMouseEvent) => {
       if (!rendererRef.current) return;
 
-      const uiState = uiStateActions.get();
+      const isRendererInteraction = rendererRef.current === e.target;
 
+      // Middle button pressed on the canvas: swap to PAN and remember the tool
+      // to give back on release.
+
+      if (
+        e.type === 'mousedown' &&
+        e.button === MIDDLE_MOUSE_BUTTON &&
+        isRendererInteraction &&
+        middlePanReturnModeRef.current === null
+      ) {
+        e.preventDefault();
+        middlePanReturnModeRef.current = uiStateActions.get().mode;
+        uiStateActions.setMode({ type: 'PAN', showCursor: false });
+      }
+
+      // Read after the swap, so this very mousedown is already routed to PAN.
+
+      const uiState = uiStateActions.get();
       const mode = modes[uiState.mode.type];
+
       const modeFunction = getModeFunction(mode, e);
 
       if (!modeFunction) return;
@@ -85,7 +108,7 @@ export const useInteractionManager = () => {
         uiState,
         rendererRef: rendererRef.current,
         rendererSize,
-        isRendererInteraction: rendererRef.current === e.target
+        isRendererInteraction
       };
 
       if (reducerTypeRef.current !== uiState.mode.type) {
@@ -104,6 +127,13 @@ export const useInteractionManager = () => {
 
       modeFunction(baseState);
       reducerTypeRef.current = uiState.mode.type;
+
+      // Release: give the tool back. Any button counts, so a lost middle
+      // mouseup can never leave the editor stuck in PAN.
+      if (e.type === 'mouseup' && middlePanReturnModeRef.current !== null) {
+        uiStateActions.setMode(middlePanReturnModeRef.current);
+        middlePanReturnModeRef.current = null;
+      }
     },
     [modelActions, scene, uiStateActions, rendererSize]
   );
@@ -139,6 +169,7 @@ export const useInteractionManager = () => {
     const onTouchStart = (e: TouchEvent) => {
       onMouseEvent({
         ...e,
+        button: 0,
         clientX: Math.floor(e.touches[0].clientX),
         clientY: Math.floor(e.touches[0].clientY),
         type: 'mousedown'
@@ -148,6 +179,7 @@ export const useInteractionManager = () => {
     const onTouchMove = (e: TouchEvent) => {
       onMouseEvent({
         ...e,
+        button: 0,
         clientX: Math.floor(e.touches[0].clientX),
         clientY: Math.floor(e.touches[0].clientY),
         type: 'mousemove'
@@ -157,6 +189,7 @@ export const useInteractionManager = () => {
     const onTouchEnd = (e: TouchEvent) => {
       onMouseEvent({
         ...e,
+        button: 0,
         clientX: 0,
         clientY: 0,
         type: 'mouseup'
@@ -212,7 +245,9 @@ export const useInteractionManager = () => {
     el.addEventListener('mousemove', onMouseEvent);
     el.addEventListener('mousedown', onMouseEvent);
     el.addEventListener('mouseup', onMouseEvent);
+
     el.addEventListener('contextmenu', onContextMenu);
+
     el.addEventListener('touchstart', onTouchStart);
     el.addEventListener('touchmove', onTouchMove);
     el.addEventListener('touchend', onTouchEnd);
