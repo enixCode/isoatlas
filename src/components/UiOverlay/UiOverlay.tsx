@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef } from 'react';
-import { Box, useTheme, Typography, Stack } from '@mui/material';
+import { Box, useTheme, Stack } from '@mui/material';
 import { ChevronRight } from '@mui/icons-material';
 import { EditorModeEnum } from 'src/types';
 import { UiElement } from 'components/UiElement/UiElement';
@@ -16,6 +16,7 @@ import { ContextMenuManager } from 'src/components/ContextMenu/ContextMenuManage
 import { useScene } from 'src/hooks/useScene';
 import { useModelStore } from 'src/stores/modelStore';
 import { ExportImageDialog } from '../ExportImageDialog/ExportImageDialog';
+import { EditableText } from './EditableText';
 
 type Tool =
   'MAIN_MENU' | 'ZOOM_CONTROLS' | 'TOOL_MENU' | 'ITEM_CONTROLS' | 'VIEW_TITLE';
@@ -70,7 +71,7 @@ export const UiOverlay = () => {
   const itemControls = useUiStateStore((state) => {
     return state.itemControls;
   });
-  const { currentView } = useScene();
+  const { currentView, updateView } = useScene();
   const editorMode = useUiStateStore((state) => {
     return state.editorMode;
   });
@@ -83,7 +84,24 @@ export const UiOverlay = () => {
   const title = useModelStore((state) => {
     return state.title;
   });
+  const modelActions = useModelStore((state) => {
+    return state.actions;
+  });
   const { size: rendererSize } = useResizeObserver(rendererEl);
+
+  const onTitleChange = useCallback(
+    (newTitle: string) => {
+      modelActions.set({ title: newTitle });
+    },
+    [modelActions]
+  );
+
+  const onViewNameChange = useCallback(
+    (name: string) => {
+      updateView({ name });
+    },
+    [updateView]
+  );
 
   return (
     <>
@@ -185,13 +203,17 @@ export const UiOverlay = () => {
               }}
             >
               <Stack direction="row" sx={{ alignItems: 'center' }}>
-                <Typography sx={{ fontWeight: 600 }} color="text.secondary">
-                  {title}
-                </Typography>
+                <EditableText
+                  value={title}
+                  onChange={onTitleChange}
+                  isEditable={editorMode === 'EDITABLE'}
+                />
                 <ChevronRight />
-                <Typography sx={{ fontWeight: 600 }} color="text.secondary">
-                  {currentView.name}
-                </Typography>
+                <EditableText
+                  value={currentView.name}
+                  onChange={onViewNameChange}
+                  isEditable={editorMode === 'EDITABLE'}
+                />
               </Stack>
             </UiElement>
           </Box>
