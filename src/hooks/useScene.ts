@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import {
   ModelItem,
+  View,
   ViewItem,
   Connector,
   TextBox,
@@ -115,6 +116,18 @@ export const useScene = () => {
       setState(newState);
     },
     [getState, setState]
+  );
+
+  const updateView = useCallback(
+    (updates: Partial<Pick<View, 'name'>>) => {
+      const newState = reducers.view({
+        action: 'UPDATE_VIEW',
+        payload: updates,
+        ctx: { viewId: currentViewId, state: getState() }
+      });
+      setState(newState);
+    },
+    [getState, setState, currentViewId]
   );
 
   const createViewItem = useCallback(
@@ -283,6 +296,7 @@ export const useScene = () => {
     createModelItem,
     updateModelItem,
     deleteModelItem,
+    updateView,
     createViewItem,
     updateViewItem,
     deleteViewItem,
