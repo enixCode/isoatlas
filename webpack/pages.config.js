@@ -1,5 +1,5 @@
-// Démo publiée sur GitHub Pages : même build que l'image Docker, seul le
-// point d'entrée change. La sortie reste dist/, servie telle quelle par Pages.
+// Demo published on GitHub Pages: same build as the Docker image, only the
+// entry point changes. Output stays in dist/, served as is by Pages.
 module.exports = {
   ...require('./docker.config'),
   entry: './src/index-pages.tsx'

@@ -14,12 +14,12 @@
 # misc
 .DS_Store
 
-# variables d'environnement (toutes les variantes, y compris le fichier sans suffixe)
+# environment variables (all variants, including the file without a suffix)
 .env
 .env.*
 !.env.example
 
-# etat et variables OpenTofu / Terraform
+# OpenTofu / Terraform state and variables
 .terraform/
 .terraform.lock.hcl
 *.tfstate
@@ -29,7 +29,7 @@
 crash.log
 crash.*.log
 
-# secrets et cles
+# secrets and keys
 *.pem
 *.key
 *.p12
@@ -44,5 +44,5 @@ yarn-error.log*
 .codesandbox/*
 .circleci/*
 
-# notes de travail locales
+# local working notes
 /TODO.md

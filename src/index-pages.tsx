@@ -1,5 +1,5 @@
-// Point d'entrée de la démo publiée sur GitHub Pages : l'éditeur seul,
-// avec le diagramme de démonstration chargé au démarrage.
+// Entry point of the demo published on GitHub Pages: the editor alone,
+// with the demo diagram loaded on startup.
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Box } from '@mui/material';

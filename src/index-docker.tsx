@@ -5,6 +5,7 @@ import { Box } from '@mui/material';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Isoatlas, { INITIAL_DATA } from 'src/Isoatlas';
 import { icons, colors } from './examples/initialData';
+import { loadSavedModel, saveModel } from './examples/persistence';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -20,7 +21,10 @@ root.render(
       }}
     />
     <Box sx={{ width: '100vw', height: '100vh' }}>
-      <Isoatlas initialData={{ ...INITIAL_DATA, icons, colors }} />
+      <Isoatlas
+        initialData={loadSavedModel({ ...INITIAL_DATA, icons, colors })}
+        onModelUpdated={saveModel}
+      />
     </Box>
   </React.StrictMode>
 );
