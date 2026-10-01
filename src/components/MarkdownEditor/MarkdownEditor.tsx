@@ -27,7 +27,7 @@ export const MarkdownEditor = ({
   });
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
-  // Memorise le dernier HTML connu pour ne pas reinjecter ce que l'editeur vient d'emettre.
+  // Remembers the last known HTML so we do not reinject what the editor just emitted.
   const lastHtml = useRef<string | undefined>(undefined);
 
   useEffect(() => {

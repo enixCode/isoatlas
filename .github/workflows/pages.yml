@@ -1,7 +1,7 @@
 name: Pages
 
-# Publie la démo de l'éditeur sur GitHub Pages à chaque push sur main.
-# Prérequis côté dépôt : Pages activé avec la source « GitHub Actions ».
+# Publishes the editor demo to GitHub Pages on every push to main.
+# Repository prerequisite: Pages enabled with the "GitHub Actions" source.
 on:
   push:
     branches: [main]
@@ -12,7 +12,7 @@ permissions:
   pages: write
   id-token: write
 
-# Un seul déploiement à la fois. Un nouveau push annule celui en attente.
+# One deployment at a time. A new push cancels the pending one.
 concurrency:
   group: pages
   cancel-in-progress: true

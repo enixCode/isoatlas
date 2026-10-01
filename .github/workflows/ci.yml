@@ -1,7 +1,7 @@
 name: CI
 
-# Contrairement a l'ancienne config CircleCI (qui ne se declenchait que sur les
-# tags de version), la validation tourne ici sur chaque push et chaque PR.
+# Unlike the old CircleCI config (which only triggered on version tags),
+# validation runs here on every push and every PR.
 on:
   push:
     branches: ['**']

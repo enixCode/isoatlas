@@ -1,5 +1,5 @@
-// Config plate d'ESLint 9. Remplace .eslintrc et la chaine Airbnb, abandonnee
-// depuis mars 2024, qui bloquait 6 paquets et 6 vulnerabilites hautes.
+// ESLint 9 flat config. Replaces .eslintrc and the Airbnb chain, abandoned
+// since March 2024, which held back 6 packages and 6 high vulnerabilities.
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -30,23 +30,23 @@ export default tseslint.config(
       }
     },
     rules: {
-      // Les hooks sont la principale source de bugs silencieux en React.
+      // Hooks are the main source of silent bugs in React.
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
 
-      // Deux cycles preexistants subsistent (stores/reducers/view.ts et
-      // viewItem.ts). En warn pour rester visible sans bloquer la CI.
+      // Two pre-existing cycles remain (stores/reducers/view.ts and
+      // viewItem.ts). Set to warn to stay visible without blocking CI.
       'import/no-cycle': 'warn',
 
-      // Style historique du projet, conserve tel quel.
+      // Historical project style, kept as is.
       'arrow-body-style': ['error', 'always'],
-      // immer expose un brouillon mutable nomme draft : c'est voulu.
+      // immer exposes a mutable draft named draft: this is intended.
       'no-param-reassign': [
         'error',
         { props: true, ignorePropertyModificationsFor: ['draft'] }
       ],
 
-      // Le prefixe underscore marque un argument volontairement inutilise.
+      // The underscore prefix marks an intentionally unused argument.
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
