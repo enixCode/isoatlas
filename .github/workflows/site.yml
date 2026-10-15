@@ -1,0 +1,61 @@
+name: Site
+
+# Builds the editor demo and uploads it to the web hosting over SFTP.
+# Secrets live in the "production" environment, restricted to main:
+# DEPLOY_HOST, DEPLOY_USER, DEPLOY_PASSWORD, and DEPLOY_KNOWN_HOSTS
+# (ssh-keyscan output of the host).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One upload at a time. A new push waits instead of cutting an upload in half.
+concurrency:
+  group: site
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Forks have no deployment target: the job is skipped there.
+    if: github.repository == 'enixCode/isoatlas'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # No npm cache in a job that handles deployment secrets.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run pages:build
+
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      # Pinned host key: the upload aborts if the server is not the expected one.
+      - name: Trust the host key
+        run: |
+          mkdir -p ~/.ssh
+          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+        env:
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+
+      # www/ is the document root of the hosting. mirror --delete makes it an
+      # exact copy of dist/, so anything added by hand in www/ is removed.
+      # The demo build also emits .d.ts files (ts-loader): they are not uploaded.
+      - name: Upload over SFTP
+        run: lftp --env-password -u "$DEPLOY_USER" "sftp://$DEPLOY_HOST" -e "mirror --reverse --delete --verbose --no-empty-dirs --exclude-glob *.d.ts dist/ www/; bye"
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          LFTP_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
