@@ -1,7 +1,6 @@
 {
   "name": "isoatlas",
   "version": "0.2.0",
-  "private": true,
   "description": "An open-source React component for drawing network diagrams.",
   "license": "MIT",
   "repository": {
@@ -10,6 +9,15 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/Isoatlas.d.ts",
+  "files": [
+    "dist",
+    "!dist/examples",
+    "!dist/fixtures",
+    "!dist/**/__tests__",
+    "!dist/index.d.ts",
+    "!dist/index-docker.d.ts",
+    "!dist/index-pages.d.ts"
+  ],
   "scripts": {
     "start": "webpack serve --config ./webpack/dev.config.js",
     "dev": "nodemon --watch ./src/ -e ts,tsx --exec npm run build",

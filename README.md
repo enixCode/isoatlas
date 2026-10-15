@@ -26,10 +26,9 @@ are addressed, and new features are welcome.
 
 ## Quick start
 
-Isoatlas is not published on npm yet. Install it from this repository, along with the
-icon packs it uses:
+Install it from npm, along with the icon packs it uses:
 
-- `npm install github:enixCode/isoatlas @isoflow/isopacks`
+- `npm install isoatlas @isoflow/isopacks`
 
 The documentation lives in [`docs/`](./docs).
 
