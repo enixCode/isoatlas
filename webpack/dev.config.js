@@ -50,7 +50,7 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       PACKAGE_VERSION: JSON.stringify(require("../package.json").version),
-      REPOSITORY_URL: JSON.stringify(require("../package.json").repository.url),
+      REPOSITORY_URL: JSON.stringify(require("../package.json").repository.url.replace(/^git\+/, '').replace(/\.git$/, '')),
     })
   ]
 };

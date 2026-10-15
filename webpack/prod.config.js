@@ -12,7 +12,9 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: '[name].js',
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'commonjs2',
+    // Empties dist/ first, so files from an older build never reach the package.
+    clean: true
   },
   externals: {
     react: {
@@ -48,7 +50,7 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       PACKAGE_VERSION: JSON.stringify(require("../package.json").version),
-      REPOSITORY_URL: JSON.stringify(require("../package.json").repository.url),
+      REPOSITORY_URL: JSON.stringify(require("../package.json").repository.url.replace(/^git\+/, '').replace(/\.git$/, '')),
     })
   ],
   resolve: {
