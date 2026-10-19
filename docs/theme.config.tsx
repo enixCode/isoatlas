@@ -1,4 +1,6 @@
 import React from 'react';
+import { useRouter } from 'next/router';
+import { useConfig } from 'nextra-theme-docs';
 
 export default {
   darkMode: false,
@@ -17,7 +19,20 @@ export default {
     );
   },
   head: () => {
-    return <link rel="icon" type="image/svg+xml" href="/favicon.svg" />;
+    // Remplace le head par defaut de Nextra, qui posait le <title>.
+    const { title } = useConfig();
+    // Les fichiers de public/ ne recoivent pas le basePath automatiquement.
+    const { basePath } = useRouter();
+    return (
+      <>
+        <title>{`${title} – Isoatlas`}</title>
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href={`${basePath}/favicon.svg`}
+        />
+      </>
+    );
   },
   nextThemes: {
     defaultTheme: 'light'
