@@ -1,6 +1,7 @@
 name: Site
 
-# Builds the editor demo and uploads it to the web hosting over SFTP.
+# Builds the editor demo (at the root) and the documentation (under /docs/)
+# and uploads them to the web hosting over SFTP.
 # Secrets live in the "production" environment, restricted to main:
 # DEPLOY_HOST, DEPLOY_USER, DEPLOY_PASSWORD, and DEPLOY_KNOWN_HOSTS
 # (ssh-keyscan output of the host).
@@ -34,10 +35,12 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm ci --prefix docs
 
       - name: Build site
-        run: npm run pages:build
+        run: npm run site:build
 
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp

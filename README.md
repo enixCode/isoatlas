@@ -30,7 +30,8 @@ Install it from npm, along with the icon packs it uses:
 
 - `npm install isoatlas @isoflow/isopacks`
 
-The documentation lives in [`docs/`](./docs).
+Read the [documentation](https://enixcode.github.io/isoatlas/docs/) or try the [live demo](https://enixcode.github.io/isoatlas/).
+The documentation sources live in [`docs/`](./docs).
 
 ## Found a bug or want to contribute?
 

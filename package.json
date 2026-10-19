@@ -26,7 +26,9 @@
     "lint": "tsc --noEmit && eslint src",
     "lint:fix": "eslint src --fix",
     "docker:build": "webpack --config ./webpack/docker.config.js",
-    "pages:build": "webpack --config ./webpack/pages.config.js"
+    "pages:build": "webpack --config ./webpack/pages.config.js",
+    "docs:build": "npm --prefix docs run build",
+    "site:build": "npm run pages:build && npm run docs:build && node -e \"require('fs').cpSync('docs/out', 'dist/docs', { recursive: true })\""
   },
   "devDependencies": {
     "@isoflow/isopacks": "^0.0.10",

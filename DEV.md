@@ -28,7 +28,8 @@ Le rechargement est automatique à chaque sauvegarde de fichier.
 | `npm run lint:fix` | Corrige automatiquement ce qui peut l'être |
 | `npm run build` | Compile la bibliothèque dans `dist/` |
 | `npm run docker:build` | Compile l'application autonome pour Docker |
-| `npm run pages:build` | Compile la démo publiée sur GitHub Pages |
+| `npm run pages:build` | Compile la démo seule dans `dist/` |
+| `npm run site:build` | Compile la démo et la doc (sous `dist/docs/`), comme en production |
 
 Avant de pousser du code, lance `npm run lint` puis `npm test`. C'est
 exactement ce que la CI vérifiera.
@@ -40,12 +41,18 @@ Le site de docs est un projet **séparé**, avec ses propres dépendances :
 ```bash
 cd docs
 npm install     # la première fois seulement
-npm run dev     # http://localhost:3002
+npm run dev     # http://localhost:3002/docs/
 ```
 
-Pour ajouter une page : créer un fichier `.mdx` dans `docs/pages/docs/`, puis
+Pour ajouter une page : créer un fichier `.mdx` dans `docs/pages/`, puis
 déclarer son titre dans le `_meta.ts` du même dossier (c'est lui qui définit
 l'ordre du menu).
+
+Le site est servi sous `/docs/` : ce préfixe est ajouté au build, donc un lien
+interne s'écrit `/installation`, pas `/docs/installation`.
+
+À chaque push sur `main`, la doc est publiée avec la démo, sous `/docs/`, sur
+GitHub Pages (workflow `pages.yml`) et sur l'hébergement (workflow `site.yml`).
 
 ## Où travailler
 
@@ -77,6 +84,9 @@ suggère, il recompile la bibliothèque en boucle. Pour développer, c'est
 `viewItem.ts`). La règle `import/no-cycle` est réglée sur `warn` pour rester
 visible sans bloquer la CI. Ils demandent une vraie correction, pas un
 contournement.
+
+**`docs/pages/api/` est interdit.** Next réserve ce dossier aux routes
+d'API : une page posée là n'est pas publiée. D'où `api-reference/`.
 
 **Le port 3000 est peut-être déjà pris** (VS Code l'utilise parfois). Dans ce
 cas : `npm start -- --port 3001`.
