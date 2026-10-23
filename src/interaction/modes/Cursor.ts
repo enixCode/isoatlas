@@ -30,7 +30,11 @@ const getAnchorOrdering = (
       pathTile,
       connector.path.rectangle.from
     );
-    return CoordsUtils.isEqual(globalTile, anchorTile);
+    // The path runs on whole tiles: compare the tiles the two positions fall on.
+    return CoordsUtils.isEqual(
+      CoordsUtils.round(globalTile),
+      CoordsUtils.round(anchorTile)
+    );
   });
 
   if (index === -1) {
@@ -121,7 +125,12 @@ export const Cursor: ModeActions = {
     let item = uiState.mode.mousedownItem;
 
     if (item?.type === 'CONNECTOR' && uiState.mouse.mousedown) {
-      const anchor = getAnchor(item.id, uiState.mouse.mousedown.tile, scene);
+      // A new anchor sits on the whole tile of the path it was picked from.
+      const anchor = getAnchor(
+        item.id,
+        CoordsUtils.round(uiState.mouse.mousedown.tile),
+        scene
+      );
 
       item = {
         type: 'CONNECTOR_ANCHOR',

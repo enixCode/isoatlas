@@ -1,8 +1,10 @@
-import { Coords, Size, Scroll } from 'src/types';
+import { Coords, Size, Scroll, View } from 'src/types';
 import { CoordsUtils, SizeUtils } from 'src/utils';
 import { PROJECTED_TILE_SIZE } from 'src/config';
 import {
+  getConnectorPath,
   getGridSubset,
+  getItemAtTile,
   isBoundsOutOfViewport,
   isWithinBounds,
   screenToIso
@@ -177,5 +179,82 @@ describe('isBoundsOutOfViewport()', () => {
         rendererSize
       })
     ).toBe(false);
+  });
+
+  test('screenToIso() snaps the mouse to a quarter of a tile', () => {
+    const zoom = 1;
+    const rendererSize = getRendererSize({ width: 10, height: 10 }, zoom);
+    const scroll = getScroll({ x: 0, y: 0 });
+    // A quarter of a tile along x, from the center of the project.
+    const tile = screenToIso({
+      mouse: {
+        x: rendererSize.width / 2 + PROJECTED_TILE_SIZE.width / 8,
+        y: rendererSize.height / 2 - PROJECTED_TILE_SIZE.height / 8
+      },
+      zoom,
+      scroll,
+      rendererSize
+    });
+
+    expect(tile).toEqual({ x: 0.25, y: -0 });
+  });
+
+  test('getItemAtTile() finds a node less than half a tile away', () => {
+    const scene = {
+      items: [{ id: 'server', tile: { x: 2.25, y: 3 } }],
+      textBoxes: [],
+      connectors: [],
+      rectangles: []
+    } as unknown as Parameters<typeof getItemAtTile>[0]['scene'];
+
+    expect(getItemAtTile({ tile: { x: 2.5, y: 3 }, scene })).toEqual({
+      type: 'ITEM',
+      id: 'server'
+    });
+    expect(getItemAtTile({ tile: { x: 2.75, y: 3 }, scene })).toBeNull();
+  });
+
+  test('getItemAtTile() picks the nearest of two overlapping nodes', () => {
+    const scene = {
+      items: [
+        { id: 'far', tile: { x: 0, y: 0 } },
+        { id: 'near', tile: { x: 0.5, y: 0 } }
+      ],
+      textBoxes: [],
+      connectors: [],
+      rectangles: []
+    } as unknown as Parameters<typeof getItemAtTile>[0]['scene'];
+
+    expect(getItemAtTile({ tile: { x: 0.5, y: 0 }, scene })?.id).toBe('near');
+  });
+
+  test('getConnectorPath() routes on whole tiles and ends on the exact nodes', () => {
+    const view = {
+      id: 'view',
+      name: 'View',
+      items: [
+        { id: 'a', tile: { x: 0.25, y: 0 } },
+        { id: 'b', tile: { x: 4.75, y: 0.5 } }
+      ],
+      connectors: []
+    } as unknown as View;
+    const { tiles, rectangle } = getConnectorPath({
+      anchors: [
+        { id: 'a1', ref: { item: 'a' } },
+        { id: 'a2', ref: { item: 'b' } }
+      ],
+      view
+    });
+    const toLocal = (tile: Coords) => {
+      return { x: rectangle.from.x - tile.x, y: rectangle.from.y - tile.y };
+    };
+
+    expect(Number.isInteger(rectangle.from.x)).toBe(true);
+    expect(Number.isInteger(rectangle.from.y)).toBe(true);
+    expect(tiles[0]).toEqual(toLocal({ x: 0.25, y: 0 }));
+    expect(tiles[tiles.length - 1]).toEqual(toLocal({ x: 4.75, y: 0.5 }));
+    tiles.slice(1, -1).forEach((tile) => {
+      expect(Number.isInteger(tile.x) && Number.isInteger(tile.y)).toBe(true);
+    });
   });
 });
