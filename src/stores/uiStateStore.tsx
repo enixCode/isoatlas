@@ -1,22 +1,53 @@
 import React, { createContext, useContext, useRef } from 'react';
 import { createStore, useStore } from 'zustand';
-import {
-  CoordsUtils,
-  incrementZoom,
-  decrementZoom,
-  getStartingMode,
-  clamp
-} from 'src/utils';
-import { UiStateStore } from 'src/types';
+import gsap from 'gsap';
+import { CoordsUtils, getStartingMode, clamp } from 'src/utils';
+import { Coords, UiStateStore } from 'src/types';
 import {
   INITIAL_UI_STATE,
   MIN_ZOOM,
   MAX_ZOOM,
+  ZOOM_INCREMENT,
   ZOOM_SENSITIVITY
 } from 'src/config';
 
 const initialState = () => {
+  // The zoom glides toward its target instead of jumping on every notch.
+  const glide = { zoom: INITIAL_UI_STATE.zoom };
+  let target = INITIAL_UI_STATE.zoom;
+
   return createStore<UiStateStore>((set, get) => {
+    // `pointer` is relative to the renderer centre, where SceneLayers anchor.
+    const zoomTowards = (delta: number, pointer: Coords) => {
+      // While a glide runs, add to its target so quick notches stack up.
+      const base = gsap.isTweening(glide) ? target : get().zoom;
+      target = clamp(base + delta, MIN_ZOOM, MAX_ZOOM);
+      glide.zoom = get().zoom;
+
+      gsap.to(glide, {
+        zoom: target,
+        duration: 0.25,
+        ease: 'power2.out',
+        overwrite: true,
+        onUpdate: () => {
+          const { zoom, scroll } = get();
+          // Keep the point under the pointer fixed by translating by the same ratio.
+          const ratio = glide.zoom / zoom;
+
+          set({
+            zoom: glide.zoom,
+            scroll: {
+              ...scroll,
+              position: {
+                x: pointer.x * (1 - ratio) + scroll.position.x * ratio,
+                y: pointer.y * (1 - ratio) + scroll.position.y * ratio
+              }
+            }
+          });
+        }
+      });
+    };
+
     return {
       zoom: INITIAL_UI_STATE.zoom,
       scroll: INITIAL_UI_STATE.scroll,
@@ -70,35 +101,15 @@ const initialState = () => {
         setIsMainMenuOpen: (isMainMenuOpen) => {
           set({ isMainMenuOpen, itemControls: null });
         },
+        // The buttons zoom around the centre of the view.
         incrementZoom: () => {
-          const { zoom } = get();
-          set({ zoom: incrementZoom(zoom) });
+          zoomTowards(ZOOM_INCREMENT, CoordsUtils.zero());
         },
         decrementZoom: () => {
-          const { zoom } = get();
-          set({ zoom: decrementZoom(zoom) });
+          zoomTowards(-ZOOM_INCREMENT, CoordsUtils.zero());
         },
-        // `pointer` is relative to the renderer centre, where SceneLayers anchor.
         zoomBy: (deltaY, pointer) => {
-          const { zoom, scroll } = get();
-          const newZoom = clamp(
-            zoom * Math.exp(-deltaY * ZOOM_SENSITIVITY),
-            MIN_ZOOM,
-            MAX_ZOOM
-          );
-          // Keep the point under the pointer fixed by translating by the same ratio.
-          const ratio = newZoom / zoom;
-
-          set({
-            zoom: newZoom,
-            scroll: {
-              ...scroll,
-              position: {
-                x: pointer.x * (1 - ratio) + scroll.position.x * ratio,
-                y: pointer.y * (1 - ratio) + scroll.position.y * ratio
-              }
-            }
-          });
+          zoomTowards(-deltaY * ZOOM_SENSITIVITY, pointer);
         },
         scrollBy: (delta) => {
           const { scroll } = get();
