@@ -3,6 +3,5 @@ export default {
   installation: 'Installation',
   quickstart: 'Quick start',
   isopacks: 'Loading Isopacks',
-  'api-reference': 'API',
-  contributing: 'Contributing'
+  'api-reference': 'API'
 };

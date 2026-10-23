@@ -10,7 +10,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 </div>
 
@@ -37,7 +37,3 @@ Install it from npm, along with the icon packs it uses:
 
 Read the [documentation](https://enixcode.github.io/isoatlas/docs/) or try the [live demo](https://enixcode.github.io/isoatlas/).
 The documentation sources live in [`docs/`](./docs).
-
-## Found a bug or want to contribute?
-
-Please open an issue or a pull request [here](https://github.com/enixCode/isoatlas/issues).
