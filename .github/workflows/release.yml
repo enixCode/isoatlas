@@ -41,5 +41,7 @@ jobs:
       - name: Build
         run: npm run build
 
+      # When npm refuses the OIDC exchange, it only says why at verbose level and
+      # falls back to setup-node's placeholder token, which ends in a bare E401.
       - name: Stage the release on npm
-        run: npm stage publish
+        run: npm stage publish --loglevel verbose
