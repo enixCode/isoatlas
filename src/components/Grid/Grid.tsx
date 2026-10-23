@@ -30,7 +30,8 @@ export const Grid = () => {
     };
 
     gsap.set(elementRef.current, {
-      backgroundSize: `${tileSize.width}px ${tileSize.height * 2}px`,
+      // The svg covers 2x2 tiles: a cross where the edges of 2x2 blocks meet.
+      backgroundSize: `${tileSize.width * 2}px ${tileSize.height * 2}px`,
       backgroundPosition: `${backgroundPosition.width}px ${backgroundPosition.height}px`
     });
 
