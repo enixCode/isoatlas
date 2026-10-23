@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/isoatlas-banner-dark.svg">
+  <img alt="isoAtlas, isometric network diagrams" src=".github/assets/isoatlas-banner-light.svg" width="100%">
+</picture>
+
 <div align="center">
     <h1>isoAtlas</h1>
     <h4>A React component for drawing network diagrams.</h4>
