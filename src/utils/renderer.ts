@@ -2,9 +2,7 @@ import { produce } from 'immer';
 import {
   UNPROJECTED_TILE_SIZE,
   PROJECTED_TILE_SIZE,
-  ZOOM_INCREMENT,
   MAX_ZOOM,
-  MIN_ZOOM,
   TEXTBOX_PADDING,
   CONNECTOR_SEARCH_OFFSET,
   DEFAULT_FONT_FAMILY,
@@ -33,7 +31,6 @@ import {
   CoordsUtils,
   SizeUtils,
   clamp,
-  roundToOneDecimalPlace,
   findPath,
   toPx,
   getItemByIdOrThrow
@@ -228,16 +225,6 @@ export const getIsoProjectionCss = (
 
 export const getTranslateCSS = (translate: Coords = { x: 0, y: 0 }) => {
   return `translate(${translate.x}px, ${translate.y}px)`;
-};
-
-export const incrementZoom = (zoom: number) => {
-  const newZoom = clamp(zoom + ZOOM_INCREMENT, MIN_ZOOM, MAX_ZOOM);
-  return roundToOneDecimalPlace(newZoom);
-};
-
-export const decrementZoom = (zoom: number) => {
-  const newZoom = clamp(zoom - ZOOM_INCREMENT, MIN_ZOOM, MAX_ZOOM);
-  return roundToOneDecimalPlace(newZoom);
 };
 
 interface GetMouse {
