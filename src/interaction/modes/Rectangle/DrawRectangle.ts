@@ -46,7 +46,6 @@ export const DrawRectangle: ModeActions = {
 
     uiState.actions.setMode({
       type: 'CURSOR',
-      showCursor: true,
       mousedownItem: null
     });
   }

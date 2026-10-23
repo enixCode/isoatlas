@@ -60,8 +60,7 @@ export const ExportImageDialog = ({ onClose, quality = 1.5 }: Props) => {
 
   useEffect(() => {
     uiStateActions.setMode({
-      type: 'INTERACTIONS_DISABLED',
-      showCursor: false
+      type: 'INTERACTIONS_DISABLED'
     });
   }, [uiStateActions]);
 

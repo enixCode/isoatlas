@@ -79,7 +79,7 @@ export const useInteractionManager = () => {
       ) {
         e.preventDefault();
         middlePanReturnModeRef.current = uiStateActions.get().mode;
-        uiStateActions.setMode({ type: 'PAN', showCursor: false });
+        uiStateActions.setMode({ type: 'PAN' });
       }
 
       // Read after the swap, so this very mousedown is already routed to PAN.

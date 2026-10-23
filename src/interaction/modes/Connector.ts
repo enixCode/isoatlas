@@ -80,7 +80,6 @@ export const Connector: ModeActions = {
 
     uiState.actions.setMode({
       type: 'CONNECTOR',
-      showCursor: true,
       id: newConnector.id
     });
   },
@@ -101,7 +100,6 @@ export const Connector: ModeActions = {
 
     uiState.actions.setMode({
       type: 'CURSOR',
-      showCursor: true,
       mousedownItem: null
     });
   }

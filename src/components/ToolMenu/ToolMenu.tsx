@@ -38,7 +38,6 @@ export const ToolMenu = () => {
 
     uiStateStoreActions.setMode({
       type: 'TEXTBOX',
-      showCursor: false,
       id: textBoxId
     });
   }, [uiStateStoreActions, createTextBox, mousePosition]);
@@ -52,7 +51,6 @@ export const ToolMenu = () => {
           onClick={() => {
             uiStateStoreActions.setMode({
               type: 'CURSOR',
-              showCursor: true,
               mousedownItem: null
             });
           }}
@@ -63,8 +61,7 @@ export const ToolMenu = () => {
           Icon={<PanToolIcon />}
           onClick={() => {
             uiStateStoreActions.setMode({
-              type: 'PAN',
-              showCursor: false
+              type: 'PAN'
             });
 
             uiStateStoreActions.setItemControls(null);
@@ -80,7 +77,6 @@ export const ToolMenu = () => {
             });
             uiStateStoreActions.setMode({
               type: 'PLACE_ICON',
-              showCursor: true,
               id: null
             });
           }}
@@ -92,7 +88,6 @@ export const ToolMenu = () => {
           onClick={() => {
             uiStateStoreActions.setMode({
               type: 'RECTANGLE.DRAW',
-              showCursor: true,
               id: null
             });
           }}
@@ -104,8 +99,7 @@ export const ToolMenu = () => {
           onClick={() => {
             uiStateStoreActions.setMode({
               type: 'CONNECTOR',
-              id: null,
-              showCursor: true
+              id: null
             });
           }}
           isActive={mode.type === 'CONNECTOR'}

@@ -141,7 +141,6 @@ export const Cursor: ModeActions = {
     if (item) {
       uiState.actions.setMode({
         type: 'DRAG_ITEMS',
-        showCursor: true,
         items: [item],
         isInitialMovement: true
       });

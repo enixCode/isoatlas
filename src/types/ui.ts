@@ -26,42 +26,35 @@ export interface Mouse {
 // Mode types
 export interface InteractionsDisabled {
   type: 'INTERACTIONS_DISABLED';
-  showCursor: boolean;
 }
 
 export interface CursorMode {
   type: 'CURSOR';
-  showCursor: boolean;
   mousedownItem: ItemReference | null;
 }
 
 export interface DragItemsMode {
   type: 'DRAG_ITEMS';
-  showCursor: boolean;
   items: ItemReference[];
   isInitialMovement: boolean;
 }
 
 export interface PanMode {
   type: 'PAN';
-  showCursor: boolean;
 }
 
 export interface PlaceIconMode {
   type: 'PLACE_ICON';
-  showCursor: boolean;
   id: string | null;
 }
 
 export interface ConnectorMode {
   type: 'CONNECTOR';
-  showCursor: boolean;
   id: string | null;
 }
 
 export interface DrawRectangleMode {
   type: 'RECTANGLE.DRAW';
-  showCursor: boolean;
   id: string | null;
 }
 
@@ -76,14 +69,12 @@ export type AnchorPosition = keyof typeof AnchorPositionOptions;
 
 export interface TransformRectangleMode {
   type: 'RECTANGLE.TRANSFORM';
-  showCursor: boolean;
   id: string;
   selectedAnchor: AnchorPosition | null;
 }
 
 export interface TextBoxMode {
   type: 'TEXTBOX';
-  showCursor: boolean;
   id: string | null;
 }
 
