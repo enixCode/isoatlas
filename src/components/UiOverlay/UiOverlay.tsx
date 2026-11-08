@@ -16,6 +16,7 @@ import { ContextMenuManager } from 'src/components/ContextMenu/ContextMenuManage
 import { useScene } from 'src/hooks/useScene';
 import { useModelStore } from 'src/stores/modelStore';
 import { ExportImageDialog } from '../ExportImageDialog/ExportImageDialog';
+import { ShortcutsDialog } from '../ShortcutsDialog/ShortcutsDialog';
 import { EditableText } from './EditableText';
 
 type Tool =
@@ -47,6 +48,7 @@ export const UiOverlay = () => {
   const theme = useTheme();
   const contextMenuAnchorRef = useRef<HTMLDivElement>(null);
   const { appPadding } = theme.customVars;
+  const buttonHeight = theme.customVars.toolMenu.height;
   const spacing = useCallback(
     (multiplier: number) => {
       return parseInt(theme.spacing(multiplier), 10);
@@ -126,8 +128,10 @@ export const UiOverlay = () => {
             }}
             style={{
               left: appPadding.x,
-              top: appPadding.y * 2 + spacing(2),
-              maxHeight: rendererSize.height - appPadding.y * 6
+              top: appPadding.y + buttonHeight + spacing(2),
+              maxHeight:
+                rendererSize.height -
+                (appPadding.y + buttonHeight + spacing(2)) * 2
             }}
           >
             <ItemControlsManager />
@@ -138,10 +142,10 @@ export const UiOverlay = () => {
           <Box
             sx={{
               position: 'absolute',
-              transform: 'translateX(-100%)'
+              transform: 'translateX(-50%)'
             }}
             style={{
-              left: rendererSize.width - appPadding.x,
+              left: rendererSize.width / 2,
               top: appPadding.y
             }}
           >
@@ -156,7 +160,7 @@ export const UiOverlay = () => {
               transformOrigin: 'bottom left'
             }}
             style={{
-              top: rendererSize.height - appPadding.y * 2,
+              top: rendererSize.height - appPadding.y - buttonHeight,
               left: appPadding.x
             }}
           >
@@ -189,9 +193,9 @@ export const UiOverlay = () => {
             }}
             style={{
               left: rendererSize.width / 2,
-              top: rendererSize.height - appPadding.y * 2,
+              top: rendererSize.height - appPadding.y - buttonHeight,
               width: rendererSize.width - 500,
-              height: appPadding.y
+              height: buttonHeight
             }}
           >
             <UiElement
@@ -229,7 +233,8 @@ export const UiOverlay = () => {
             style={{
               maxWidth: `calc(${rendererSize.width} - ${appPadding.x * 2}px)`,
               left: appPadding.x,
-              top: rendererSize.height - appPadding.y * 2 - spacing(1)
+              top:
+                rendererSize.height - appPadding.y - buttonHeight - spacing(1)
             }}
           >
             <DebugUtils />
@@ -241,6 +246,14 @@ export const UiOverlay = () => {
         <SceneLayer>
           <DragAndDrop iconId={mode.id} tile={mouse.position.tile} />
         </SceneLayer>
+      )}
+
+      {dialog === 'SHORTCUTS' && (
+        <ShortcutsDialog
+          onClose={() => {
+            return uiStateActions.setDialog(null);
+          }}
+        />
       )}
 
       {dialog === 'EXPORT_IMAGE' && (

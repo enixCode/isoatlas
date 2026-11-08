@@ -101,8 +101,10 @@ export const MAIN_MENU_OPTIONS: MainMenuOptions = [
   'ACTION.OPEN',
   'EXPORT.JSON',
   'EXPORT.PNG',
+  'ACTION.TOGGLE_GRID',
   'ACTION.CLEAR_CANVAS',
-  'LINK.DISCORD',
+  'HELP.SHORTCUTS',
+  'LINK.DOCS',
   'LINK.GITHUB',
   'VERSION'
 ];
@@ -115,5 +117,8 @@ export const DEFAULT_ICON: Icon = {
 };
 
 export const DEFAULT_LABEL_HEIGHT = 20;
+// Placement step, in tiles: the mouse, and so every element placed or dragged,
+// snaps to a quarter of a tile. Connectors still route on whole tiles.
+export const GRID_STEP = 0.25;
 export const PROJECT_BOUNDING_BOX_PADDING = 3;
 export const MARKDOWN_EMPTY_VALUE = '<p><br></p>';

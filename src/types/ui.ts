@@ -26,42 +26,35 @@ export interface Mouse {
 // Mode types
 export interface InteractionsDisabled {
   type: 'INTERACTIONS_DISABLED';
-  showCursor: boolean;
 }
 
 export interface CursorMode {
   type: 'CURSOR';
-  showCursor: boolean;
   mousedownItem: ItemReference | null;
 }
 
 export interface DragItemsMode {
   type: 'DRAG_ITEMS';
-  showCursor: boolean;
   items: ItemReference[];
   isInitialMovement: boolean;
 }
 
 export interface PanMode {
   type: 'PAN';
-  showCursor: boolean;
 }
 
 export interface PlaceIconMode {
   type: 'PLACE_ICON';
-  showCursor: boolean;
   id: string | null;
 }
 
 export interface ConnectorMode {
   type: 'CONNECTOR';
-  showCursor: boolean;
   id: string | null;
 }
 
 export interface DrawRectangleMode {
   type: 'RECTANGLE.DRAW';
-  showCursor: boolean;
   id: string | null;
 }
 
@@ -76,14 +69,12 @@ export type AnchorPosition = keyof typeof AnchorPositionOptions;
 
 export interface TransformRectangleMode {
   type: 'RECTANGLE.TRANSFORM';
-  showCursor: boolean;
   id: string;
   selectedAnchor: AnchorPosition | null;
 }
 
 export interface TextBoxMode {
   type: 'TEXTBOX';
-  showCursor: boolean;
   id: string | null;
 }
 
@@ -114,7 +105,8 @@ export type IconCollectionStateWithIcons = IconCollectionState & {
 };
 
 export const DialogTypeEnum = {
-  EXPORT_IMAGE: 'EXPORT_IMAGE'
+  EXPORT_IMAGE: 'EXPORT_IMAGE',
+  SHORTCUTS: 'SHORTCUTS'
 } as const;
 
 export interface ContextMenu {
@@ -139,6 +131,8 @@ export interface UiState {
   mode: Mode;
   dialog: keyof typeof DialogTypeEnum | null;
   isMainMenuOpen: boolean;
+  // Toggled from the main menu, on top of the host's renderer.showGrid.
+  showGrid: boolean;
   itemControls: ItemControls | null;
   contextMenu: ContextMenu | null;
   zoom: number;
@@ -161,6 +155,7 @@ export interface UiStateActions {
   zoomBy: (deltaY: number, pointer: Coords) => void;
   setIsMainMenuOpen: (isOpen: boolean) => void;
   setDialog: (dialog: keyof typeof DialogTypeEnum | null) => void;
+  setShowGrid: (showGrid: boolean) => void;
   setZoom: (zoom: number) => void;
   scrollBy: (delta: Coords) => void;
   setScroll: (scroll: Scroll) => void;

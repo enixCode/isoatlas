@@ -19,8 +19,7 @@ export const RectangleTransformControls = ({ id }: Props) => {
       uiStateActions.setMode({
         type: 'RECTANGLE.TRANSFORM',
         id: rectangle.id,
-        selectedAnchor: key,
-        showCursor: true
+        selectedAnchor: key
       });
     },
     [rectangle.id, uiStateActions]

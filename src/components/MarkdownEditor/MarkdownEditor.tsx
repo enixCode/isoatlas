@@ -38,7 +38,9 @@ export const MarkdownEditor = ({
     if (next === lastHtml.current) return;
 
     lastHtml.current = next;
-    quill.clipboard.dangerouslyPasteHTML(next, 'silent');
+    // Not dangerouslyPasteHTML: it also calls setSelection(0), which focuses
+    // the editor each time an item is selected and swallows Ctrl+C / Ctrl+V.
+    quill.setContents(quill.clipboard.convert({ html: next }), 'silent');
   }, [quill, value]);
 
   useEffect(() => {

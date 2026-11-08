@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { Box } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInteractionManager } from 'src/interaction/useInteractionManager';
+import { useCopyPaste } from 'src/interaction/useCopyPaste';
 import { Grid } from 'src/components/Grid/Grid';
-import { Cursor } from 'src/components/Cursor/Cursor';
 import { Nodes } from 'src/components/SceneLayers/Nodes/Nodes';
 import { Rectangles } from 'src/components/SceneLayers/Rectangles/Rectangles';
 import { Connectors } from 'src/components/SceneLayers/Connectors/Connectors';
@@ -21,13 +21,11 @@ export const Renderer = ({ showGrid, backgroundColor }: RendererProps) => {
   const enableDebugTools = useUiStateStore((state) => {
     return state.enableDebugTools;
   });
-  const mode = useUiStateStore((state) => {
-    return state.mode;
-  });
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
   });
   const { setInteractionsElement } = useInteractionManager();
+  useCopyPaste();
   const { items, rectangles, connectors, textBoxes } = useScene();
 
   useEffect(() => {
@@ -37,9 +35,12 @@ export const Renderer = ({ showGrid, backgroundColor }: RendererProps) => {
     uiStateActions.setRendererEl(containerRef.current);
   }, [setInteractionsElement, uiStateActions]);
 
+  const showGridFromMenu = useUiStateStore((state) => {
+    return state.showGrid;
+  });
   const isShowGrid = useMemo(() => {
-    return showGrid === undefined || showGrid;
-  }, [showGrid]);
+    return (showGrid === undefined || showGrid) && showGridFromMenu;
+  }, [showGrid, showGridFromMenu]);
 
   return (
     <Box
@@ -70,11 +71,6 @@ export const Renderer = ({ showGrid, backgroundColor }: RendererProps) => {
       >
         {isShowGrid && <Grid />}
       </Box>
-      {mode.showCursor && (
-        <SceneLayer>
-          <Cursor />
-        </SceneLayer>
-      )}
       <SceneLayer>
         <Connectors connectors={connectors} />
       </SceneLayer>

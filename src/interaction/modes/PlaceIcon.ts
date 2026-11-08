@@ -16,8 +16,7 @@ export const PlaceIcon: ModeActions = {
 
       uiState.actions.setMode({
         type: 'CURSOR',
-        mousedownItem: itemAtTile,
-        showCursor: true
+        mousedownItem: itemAtTile
       });
 
       uiState.actions.setItemControls(null);

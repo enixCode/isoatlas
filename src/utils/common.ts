@@ -65,11 +65,11 @@ export const getStartingMode = (
 ): Mode => {
   switch (editorMode) {
     case 'EDITABLE':
-      return { type: 'CURSOR', showCursor: true, mousedownItem: null };
+      return { type: 'CURSOR', mousedownItem: null };
     case 'EXPLORABLE_READONLY':
-      return { type: 'PAN', showCursor: false };
+      return { type: 'PAN' };
     case 'NON_INTERACTIVE':
-      return { type: 'INTERACTIONS_DISABLED', showCursor: false };
+      return { type: 'INTERACTIONS_DISABLED' };
     default:
       throw new Error('Invalid editor mode.');
   }

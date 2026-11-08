@@ -8,7 +8,8 @@ import {
   DEFAULT_FONT_FAMILY,
   TEXTBOX_DEFAULTS,
   TEXTBOX_FONT_WEIGHT,
-  PROJECT_BOUNDING_BOX_PADDING
+  PROJECT_BOUNDING_BOX_PADDING,
+  GRID_STEP
 } from 'src/config';
 import {
   Coords,
@@ -44,7 +45,7 @@ interface ScreenToIso {
   rendererSize: Size;
 }
 
-// converts a mouse position to a tile position
+// converts a mouse position to a tile position, snapped to GRID_STEP
 export const screenToIso = ({
   mouse,
   zoom,
@@ -52,23 +53,24 @@ export const screenToIso = ({
   rendererSize
 }: ScreenToIso) => {
   const projectedTileSize = SizeUtils.multiply(PROJECTED_TILE_SIZE, zoom);
-  const halfW = projectedTileSize.width / 2;
-  const halfH = projectedTileSize.height / 2;
 
   const projectPosition = {
     x: -rendererSize.width * 0.5 + mouse.x - scroll.position.x,
     y: -rendererSize.height * 0.5 + mouse.y - scroll.position.y
   };
 
+  // Position in tiles, unrounded: tile centers fall on whole numbers.
+  const x =
+    projectPosition.x / projectedTileSize.width -
+    projectPosition.y / projectedTileSize.height;
+  const y = -(
+    projectPosition.y / projectedTileSize.height +
+    projectPosition.x / projectedTileSize.width
+  );
+
   const tile = {
-    x: Math.floor(
-      (projectPosition.x + halfW) / projectedTileSize.width -
-        projectPosition.y / projectedTileSize.height
-    ),
-    y: -Math.floor(
-      (projectPosition.y + halfH) / projectedTileSize.height +
-        projectPosition.x / projectedTileSize.width
-    )
+    x: Math.floor(x / GRID_STEP + 0.5) * GRID_STEP,
+    y: -Math.floor(-y / GRID_STEP + 0.5) * GRID_STEP
   };
 
   return tile;
@@ -347,9 +349,11 @@ export const getConnectorPath = ({
       `Connector needs at least two anchors (receieved: ${anchors.length})`
     );
 
-  const anchorPosition = anchors.map((anchor) => {
+  const exactAnchorPosition = anchors.map((anchor) => {
     return getAnchorTile(anchor, view);
   });
+  // The pathfinder works on whole tiles.
+  const anchorPosition = exactAnchorPosition.map(CoordsUtils.round);
 
   const searchArea = getBoundingBox(anchorPosition, CONNECTOR_SEARCH_OFFSET);
 
@@ -366,7 +370,15 @@ export const getConnectorPath = ({
       origin: rectangle.from
     });
   });
+  const exactPositions = exactAnchorPosition.map((position) => {
+    return normalisePositionFromOrigin({
+      position,
+      origin: rectangle.from
+    });
+  });
 
+  // Each leg is routed between whole tiles, then starts and ends on the exact
+  // anchors, so that a line still meets a node placed between tiles.
   const tiles = positionsNormalisedFromSearchArea.reduce<Coords[]>(
     (acc, position, i) => {
       if (i === 0) return acc;
@@ -378,7 +390,12 @@ export const getConnectorPath = ({
         gridSize: searchAreaSize
       });
 
-      return [...acc, ...path];
+      return [
+        ...acc,
+        exactPositions[i - 1],
+        ...path.slice(1, -1),
+        exactPositions[i]
+      ];
     },
     []
   );
@@ -437,8 +454,19 @@ export const getItemAtTile = ({
   tile,
   scene
 }: GetItemAtTile): ItemReference | null => {
-  const viewItem = scene.items.find((item) => {
-    return CoordsUtils.isEqual(item.tile, tile);
+  // A node covers its own tile, wherever it stands between tiles: the nearest
+  // node less than half a tile away on both axes.
+  let viewItem: (typeof scene.items)[number] | undefined;
+  let viewItemDistance = Infinity;
+
+  scene.items.forEach((item) => {
+    const dx = Math.abs(item.tile.x - tile.x);
+    const dy = Math.abs(item.tile.y - tile.y);
+
+    if (dx >= 0.5 || dy >= 0.5 || dx + dy >= viewItemDistance) return;
+
+    viewItem = item;
+    viewItemDistance = dx + dy;
   });
 
   if (viewItem) {
@@ -478,7 +506,11 @@ export const getItemAtTile = ({
         con.path.rectangle.from
       );
 
-      return CoordsUtils.isEqual(globalPathTile, tile);
+      // A connector is picked on whole tiles, as it is routed.
+      return CoordsUtils.isEqual(
+        CoordsUtils.round(globalPathTile),
+        CoordsUtils.round(tile)
+      );
     });
   });
 
@@ -747,4 +779,30 @@ export const getFitToViewParams = (view: View, viewportSize: Size) => {
     zoom,
     scroll
   };
+};
+
+interface IsBoundsOutOfViewport {
+  bounds: Size & Coords;
+  zoom: number;
+  scroll: Coords;
+  rendererSize: Size;
+}
+
+// True when unprojected bounds (as from getUnprojectedBounds) do not touch the
+// viewport at all. Same transform as SceneLayer: centre + scroll + p * zoom.
+export const isBoundsOutOfViewport = ({
+  bounds,
+  zoom,
+  scroll,
+  rendererSize
+}: IsBoundsOutOfViewport) => {
+  const left = rendererSize.width / 2 + scroll.x + bounds.x * zoom;
+  const top = rendererSize.height / 2 + scroll.y + bounds.y * zoom;
+
+  return (
+    left > rendererSize.width ||
+    top > rendererSize.height ||
+    left + bounds.width * zoom < 0 ||
+    top + bounds.height * zoom < 0
+  );
 };

@@ -26,7 +26,6 @@ export const IconSelectionControls = () => {
 
       uiStateActions.setMode({
         type: 'PLACE_ICON',
-        showCursor: true,
         id: icon.id
       });
     },

@@ -56,7 +56,6 @@
 //       if (!isWithinSelection) {
 //         draft.mode = {
 //           type: 'CURSOR',
-//           showCursor: true,
 //           mousedown: null
 //         };
 
@@ -72,7 +71,6 @@
 
 //     draft.mode = {
 //       type: 'CURSOR',
-//       showCursor: true,
 //       mousedown: null
 //     };
 //   }

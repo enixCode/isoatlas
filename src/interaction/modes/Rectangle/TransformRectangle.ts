@@ -68,8 +68,7 @@ export const TransformRectangle: ModeActions = {
 
     uiState.actions.setMode({
       type: 'CURSOR',
-      mousedownItem: null,
-      showCursor: true
+      mousedownItem: null
     });
   }
 };

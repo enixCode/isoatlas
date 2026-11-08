@@ -29,7 +29,6 @@ export const TextBox: ModeActions = {
 
     uiState.actions.setMode({
       type: 'CURSOR',
-      showCursor: true,
       mousedownItem: null
     });
   }

@@ -28,4 +28,9 @@ export class CoordsUtils {
   static zero() {
     return { x: 0, y: 0 };
   }
+
+  // The whole tile a position falls on.
+  static round(coords: Coords): Coords {
+    return { x: Math.round(coords.x), y: Math.round(coords.y) };
+  }
 }

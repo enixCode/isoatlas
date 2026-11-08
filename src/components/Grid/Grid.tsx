@@ -3,13 +3,21 @@ import { Box } from '@mui/material';
 import gsap from 'gsap';
 import { Size } from 'src/types';
 import gridTileSvg from 'src/assets/grid-tile-bg.svg';
+import gridSubtileSvg from 'src/assets/grid-subtile-bg.svg';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { PROJECTED_TILE_SIZE } from 'src/config';
 import { SizeUtils } from 'src/utils/SizeUtils';
+import { clamp } from 'src/utils';
 import { useResizeObserver } from 'src/hooks/useResizeObserver';
+
+// The quarter lines fade in between these zoom levels: further out, they would
+// be closer together than the eye can tell apart.
+const SUBTILE_ZOOM_HIDDEN = 0.3;
+const SUBTILE_ZOOM_SHOWN = 0.6;
 
 export const Grid = () => {
   const elementRef = useRef<HTMLDivElement>(null);
+  const subtileRef = useRef<HTMLDivElement>(null);
   const { size } = useResizeObserver(elementRef.current);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const scroll = useUiStateStore((state) => {
@@ -20,19 +28,30 @@ export const Grid = () => {
   });
 
   useEffect(() => {
-    if (!elementRef.current) return;
+    if (!elementRef.current || !subtileRef.current) return;
 
     const tileSize = SizeUtils.multiply(PROJECTED_TILE_SIZE, zoom);
     const elSize = elementRef.current.getBoundingClientRect();
+    // Each svg covers one tile cell, whose two diagonals cross at its center:
+    // that center lands on a tile corner, half a tile right of the origin.
     const backgroundPosition: Size = {
-      width: elSize.width / 2 + scroll.position.x + tileSize.width / 2,
-      height: elSize.height / 2 + scroll.position.y
+      width: elSize.width / 2 + scroll.position.x,
+      height: elSize.height / 2 + scroll.position.y - tileSize.height / 2
+    };
+    const background = {
+      backgroundSize: `${tileSize.width}px ${tileSize.height}px`,
+      backgroundPosition: `${backgroundPosition.width}px ${backgroundPosition.height}px`
     };
 
-    gsap.set(elementRef.current, {
-      // The svg covers 2x2 tiles: a cross where the edges of 2x2 blocks meet.
-      backgroundSize: `${tileSize.width * 2}px ${tileSize.height * 2}px`,
-      backgroundPosition: `${backgroundPosition.width}px ${backgroundPosition.height}px`
+    gsap.set(elementRef.current, background);
+    gsap.set(subtileRef.current, {
+      ...background,
+      opacity: clamp(
+        (zoom - SUBTILE_ZOOM_HIDDEN) /
+          (SUBTILE_ZOOM_SHOWN - SUBTILE_ZOOM_HIDDEN),
+        0,
+        1
+      )
     });
 
     // No longer about animation: this second render is what finally hands
@@ -55,6 +74,15 @@ export const Grid = () => {
         pointerEvents: 'none'
       }}
     >
+      <Box
+        ref={subtileRef}
+        sx={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          background: `repeat url("${gridSubtileSvg}")`
+        }}
+      />
       <Box
         ref={elementRef}
         sx={{

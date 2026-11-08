@@ -3,11 +3,14 @@ import { Menu, Typography, Divider, Card } from '@mui/material';
 import {
   Menu as MenuIcon,
   GitHub as GitHubIcon,
-  QuestionAnswer as QuestionAnswerIcon,
   DataObject as ExportJsonIcon,
   ImageOutlined as ExportImageIcon,
   FolderOpen as FolderOpenIcon,
-  DeleteOutlined as DeleteOutlineIcon
+  DeleteOutlined as DeleteOutlineIcon,
+  GridOn as GridOnIcon,
+  GridOff as GridOffIcon,
+  KeyboardOutlined as KeyboardIcon,
+  MenuBookOutlined as DocsIcon
 } from '@mui/icons-material';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { IconButton } from 'src/components/IconButton/IconButton';
@@ -27,6 +30,9 @@ export const MainMenu = () => {
   });
   const mainMenuOptions = useUiStateStore((state) => {
     return state.mainMenuOptions;
+  });
+  const showGrid = useUiStateStore((state) => {
+    return state.showGrid;
   });
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
@@ -84,6 +90,16 @@ export const MainMenu = () => {
     uiStateActions.setDialog('EXPORT_IMAGE');
   }, [uiStateActions]);
 
+  const onToggleGrid = useCallback(() => {
+    uiStateActions.setShowGrid(!showGrid);
+    uiStateActions.setIsMainMenuOpen(false);
+  }, [uiStateActions, showGrid]);
+
+  const onShowShortcuts = useCallback(() => {
+    uiStateActions.setIsMainMenuOpen(false);
+    uiStateActions.setDialog('SHORTCUTS');
+  }, [uiStateActions]);
+
   const { clear } = initialDataManager;
 
   const onClearCanvas = useCallback(() => {
@@ -100,7 +116,7 @@ export const MainMenu = () => {
       ),
       links: Boolean(
         mainMenuOptions.find((opt) => {
-          return opt.includes('LINK');
+          return opt.includes('LINK') || opt.includes('HELP');
         })
       ),
       version: Boolean(mainMenuOptions.includes('VERSION'))
@@ -153,6 +169,15 @@ export const MainMenu = () => {
             </MenuItem>
           )}
 
+          {mainMenuOptions.includes('ACTION.TOGGLE_GRID') && (
+            <MenuItem
+              onClick={onToggleGrid}
+              Icon={showGrid ? <GridOffIcon /> : <GridOnIcon />}
+            >
+              {showGrid ? 'Hide grid' : 'Show grid'}
+            </MenuItem>
+          )}
+
           {mainMenuOptions.includes('ACTION.CLEAR_CANVAS') && (
             <MenuItem onClick={onClearCanvas} Icon={<DeleteOutlineIcon />}>
               Clear the canvas
@@ -163,6 +188,23 @@ export const MainMenu = () => {
             <>
               <Divider />
 
+              {mainMenuOptions.includes('HELP.SHORTCUTS') && (
+                <MenuItem onClick={onShowShortcuts} Icon={<KeyboardIcon />}>
+                  Keyboard shortcuts
+                </MenuItem>
+              )}
+
+              {mainMenuOptions.includes('LINK.DOCS') && (
+                <MenuItem
+                  onClick={() => {
+                    return gotoUrl('https://isoatlas.dev/docs/');
+                  }}
+                  Icon={<DocsIcon />}
+                >
+                  Documentation
+                </MenuItem>
+              )}
+
               {mainMenuOptions.includes('LINK.GITHUB') && (
                 <MenuItem
                   onClick={() => {
@@ -171,17 +213,6 @@ export const MainMenu = () => {
                   Icon={<GitHubIcon />}
                 >
                   GitHub
-                </MenuItem>
-              )}
-
-              {mainMenuOptions.includes('LINK.DISCORD') && (
-                <MenuItem
-                  onClick={() => {
-                    return gotoUrl('https://discord.gg/QYPkvZth7D');
-                  }}
-                  Icon={<QuestionAnswerIcon />}
-                >
-                  Discord
                 </MenuItem>
               )}
             </>
