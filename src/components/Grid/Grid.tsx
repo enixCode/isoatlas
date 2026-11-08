@@ -24,14 +24,15 @@ export const Grid = () => {
 
     const tileSize = SizeUtils.multiply(PROJECTED_TILE_SIZE, zoom);
     const elSize = elementRef.current.getBoundingClientRect();
+    // The svg covers one tile cell, whose two diagonals cross at its center:
+    // that center lands on a tile corner, half a tile right of the origin.
     const backgroundPosition: Size = {
-      width: elSize.width / 2 + scroll.position.x + tileSize.width / 2,
-      height: elSize.height / 2 + scroll.position.y
+      width: elSize.width / 2 + scroll.position.x,
+      height: elSize.height / 2 + scroll.position.y - tileSize.height / 2
     };
 
     gsap.set(elementRef.current, {
-      // The svg covers 2x2 tiles: a cross where the edges of 2x2 blocks meet.
-      backgroundSize: `${tileSize.width * 2}px ${tileSize.height * 2}px`,
+      backgroundSize: `${tileSize.width}px ${tileSize.height}px`,
       backgroundPosition: `${backgroundPosition.width}px ${backgroundPosition.height}px`
     });
 
