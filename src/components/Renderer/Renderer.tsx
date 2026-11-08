@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { Box } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInteractionManager } from 'src/interaction/useInteractionManager';
+import { useCopyPaste } from 'src/interaction/useCopyPaste';
 import { Grid } from 'src/components/Grid/Grid';
 import { Cursor } from 'src/components/Cursor/Cursor';
 import { Nodes } from 'src/components/SceneLayers/Nodes/Nodes';
@@ -28,6 +29,7 @@ export const Renderer = ({ showGrid, backgroundColor }: RendererProps) => {
     return state.actions;
   });
   const { setInteractionsElement } = useInteractionManager();
+  useCopyPaste();
   const { items, rectangles, connectors, textBoxes } = useScene();
 
   useEffect(() => {
