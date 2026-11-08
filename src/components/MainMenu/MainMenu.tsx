@@ -225,7 +225,7 @@ export const MainMenu = () => {
               {mainMenuOptions.includes('VERSION') && (
                 <MenuItem>
                   <Typography variant="body2" color="text.secondary">
-                    Isoatlas v{PACKAGE_VERSION}
+                    isoAtlas v{PACKAGE_VERSION}
                   </Typography>
                 </MenuItem>
               )}

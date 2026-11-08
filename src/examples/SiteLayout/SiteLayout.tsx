@@ -53,7 +53,7 @@ const Header = () => {
         }}
       >
         <Logo />
-        Isoatlas
+        isoAtlas
       </Link>
       <Box sx={{ flexGrow: 1 }} />
       <Button
@@ -97,7 +97,7 @@ const Footer = () => {
         overflow: 'hidden'
       }}
     >
-      <span>Isoatlas v{PACKAGE_VERSION} · MIT License</span>
+      <span>isoAtlas v{PACKAGE_VERSION} · MIT License</span>
       <span>
         Community fork of{' '}
         <Link href={ISOFLOW_URL} target="_blank" rel="noreferrer">
