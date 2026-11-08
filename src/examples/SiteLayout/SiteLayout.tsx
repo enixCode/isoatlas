@@ -1,9 +1,16 @@
 import React from 'react';
 import { Box, Button, IconButton, Link } from '@mui/material';
 import { GitHub as GitHubIcon } from '@mui/icons-material';
+// The brand logo of the README, so the site and the repository show the same one.
+import logoSrc from '../../../.github/assets/isoatlas-logo.svg';
 
 const HEADER_HEIGHT = 48;
 const FOOTER_HEIGHT = 32;
+
+// Brand fonts, loaded in index.html. The editor keeps its own: Isoatlas wraps
+// itself in its theme, so these only reach the header and the footer.
+const SITE_FONT = '"Red Hat Text", Roboto, Arial, sans-serif';
+const WORDMARK_FONT = '"Red Hat Display", "Red Hat Text", sans-serif';
 
 // Relative on purpose: the site is served from / on its own domain and from
 // /isoatlas/ on GitHub Pages, with the docs under docs/ in both cases.
@@ -11,15 +18,9 @@ const DOCS_URL = 'docs/';
 const NPM_URL = 'https://www.npmjs.com/package/isoatlas';
 const ISOFLOW_URL = 'https://github.com/markmanx/isoflow';
 
-// Same cube as the favicon in index.html.
+// Same logo as the favicon in index.html.
 const Logo = () => {
-  return (
-    <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
-      <path d="M16 3 L29 10.5 L16 18 L3 10.5 Z" fill="#5b9bd5" />
-      <path d="M3 10.5 L16 18 L16 29 L3 21.5 Z" fill="#2e5f8a" />
-      <path d="M29 10.5 L16 18 L16 29 L29 21.5 Z" fill="#417cb8" />
-    </svg>
-  );
+  return <Box component="img" src={logoSrc} alt="" sx={{ height: 26 }} />;
 };
 
 const Header = () => {
@@ -46,7 +47,8 @@ const Header = () => {
           display: 'flex',
           alignItems: 'center',
           gap: 1,
-          fontWeight: 600,
+          fontFamily: WORDMARK_FONT,
+          fontWeight: 800,
           fontSize: '1.1rem'
         }}
       >
@@ -54,7 +56,12 @@ const Header = () => {
         Isoatlas
       </Link>
       <Box sx={{ flexGrow: 1 }} />
-      <Button href={DOCS_URL} variant="text" color="inherit">
+      <Button
+        href={DOCS_URL}
+        variant="text"
+        color="inherit"
+        sx={{ fontFamily: 'inherit' }}
+      >
         Documentation
       </Button>
       <IconButton
@@ -119,9 +126,7 @@ export const SiteLayout = ({ children }: Props) => {
         // would hide the footer. 100dvh is the visible height.
         '@supports (height: 100dvh)': { height: '100dvh' },
         // Links inherit the font of the body, which the page leaves unset.
-        fontFamily: (theme) => {
-          return theme.typography.fontFamily;
-        },
+        fontFamily: SITE_FONT,
         display: 'flex',
         flexDirection: 'column'
       }}
