@@ -15,7 +15,7 @@ import {
 const SHORTCUTS = [
   ['Ctrl / ⌘ + C', 'Copy the selected element'],
   ['Ctrl / ⌘ + V', 'Paste it under the mouse'],
-  ['Delete', 'Delete the selected element'],
+  ['Delete or Backspace', 'Delete the selected element'],
   ['Wheel', 'Pan up and down'],
   ['Shift + wheel', 'Pan sideways'],
   ['Ctrl / ⌘ + wheel, or pinch', 'Zoom'],

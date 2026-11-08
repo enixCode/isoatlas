@@ -1,4 +1,12 @@
-import { deleteSelectedItem } from '../useDeleteKey';
+import { deleteSelectedItem, isDeleteKey } from '../useDeleteKey';
+
+describe('isDeleteKey()', () => {
+  test('accepts Delete and Backspace, the Mac "delete" key', () => {
+    expect(isDeleteKey('Delete')).toBe(true);
+    expect(isDeleteKey('Backspace')).toBe(true);
+    expect(isDeleteKey('d')).toBe(false);
+  });
+});
 
 const makeScene = () => {
   return {

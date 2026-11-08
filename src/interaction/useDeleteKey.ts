@@ -35,7 +35,13 @@ export const deleteSelectedItem = (
   return true;
 };
 
-// The Delete key removes the selected element, like its Delete button.
+// Delete, or Backspace since the Mac key labelled "delete" sends it (as in
+// Excalidraw).
+export const isDeleteKey = (key: string) => {
+  return key === 'Delete' || key === 'Backspace';
+};
+
+// The delete keys remove the selected element, like its Delete button.
 export const useDeleteKey = () => {
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
@@ -44,7 +50,7 @@ export const useDeleteKey = () => {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Delete') return;
+      if (!isDeleteKey(e.key)) return;
 
       const { editorMode, itemControls } = uiStateActions.get();
 
