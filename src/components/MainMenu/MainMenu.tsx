@@ -6,7 +6,9 @@ import {
   DataObject as ExportJsonIcon,
   ImageOutlined as ExportImageIcon,
   FolderOpen as FolderOpenIcon,
-  DeleteOutlined as DeleteOutlineIcon
+  DeleteOutlined as DeleteOutlineIcon,
+  GridOn as GridOnIcon,
+  GridOff as GridOffIcon
 } from '@mui/icons-material';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { IconButton } from 'src/components/IconButton/IconButton';
@@ -26,6 +28,9 @@ export const MainMenu = () => {
   });
   const mainMenuOptions = useUiStateStore((state) => {
     return state.mainMenuOptions;
+  });
+  const showGrid = useUiStateStore((state) => {
+    return state.showGrid;
   });
   const uiStateActions = useUiStateStore((state) => {
     return state.actions;
@@ -82,6 +87,11 @@ export const MainMenu = () => {
     uiStateActions.setIsMainMenuOpen(false);
     uiStateActions.setDialog('EXPORT_IMAGE');
   }, [uiStateActions]);
+
+  const onToggleGrid = useCallback(() => {
+    uiStateActions.setShowGrid(!showGrid);
+    uiStateActions.setIsMainMenuOpen(false);
+  }, [uiStateActions, showGrid]);
 
   const { clear } = initialDataManager;
 
@@ -149,6 +159,15 @@ export const MainMenu = () => {
           {mainMenuOptions.includes('EXPORT.PNG') && (
             <MenuItem onClick={onExportAsImage} Icon={<ExportImageIcon />}>
               Export as image
+            </MenuItem>
+          )}
+
+          {mainMenuOptions.includes('ACTION.TOGGLE_GRID') && (
+            <MenuItem
+              onClick={onToggleGrid}
+              Icon={showGrid ? <GridOffIcon /> : <GridOnIcon />}
+            >
+              {showGrid ? 'Hide grid' : 'Show grid'}
             </MenuItem>
           )}
 

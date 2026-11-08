@@ -39,9 +39,12 @@ export const Renderer = ({ showGrid, backgroundColor }: RendererProps) => {
     uiStateActions.setRendererEl(containerRef.current);
   }, [setInteractionsElement, uiStateActions]);
 
+  const showGridFromMenu = useUiStateStore((state) => {
+    return state.showGrid;
+  });
   const isShowGrid = useMemo(() => {
-    return showGrid === undefined || showGrid;
-  }, [showGrid]);
+    return (showGrid === undefined || showGrid) && showGridFromMenu;
+  }, [showGrid, showGridFromMenu]);
 
   return (
     <Box

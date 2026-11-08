@@ -58,6 +58,7 @@ const initialState = () => {
       iconCategoriesState: [],
       isMainMenuOpen: false,
       dialog: null,
+      showGrid: true,
       rendererEl: null,
       contextMenu: null,
       mouse: {
@@ -97,6 +98,9 @@ const initialState = () => {
         },
         setDialog: (dialog) => {
           set({ dialog });
+        },
+        setShowGrid: (showGrid) => {
+          set({ showGrid });
         },
         setIsMainMenuOpen: (isMainMenuOpen) => {
           set({ isMainMenuOpen, itemControls: null });

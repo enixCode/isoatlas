@@ -139,6 +139,8 @@ export interface UiState {
   mode: Mode;
   dialog: keyof typeof DialogTypeEnum | null;
   isMainMenuOpen: boolean;
+  // Toggled from the main menu, on top of the host's renderer.showGrid.
+  showGrid: boolean;
   itemControls: ItemControls | null;
   contextMenu: ContextMenu | null;
   zoom: number;
@@ -161,6 +163,7 @@ export interface UiStateActions {
   zoomBy: (deltaY: number, pointer: Coords) => void;
   setIsMainMenuOpen: (isOpen: boolean) => void;
   setDialog: (dialog: keyof typeof DialogTypeEnum | null) => void;
+  setShowGrid: (showGrid: boolean) => void;
   setZoom: (zoom: number) => void;
   scrollBy: (delta: Coords) => void;
   setScroll: (scroll: Scroll) => void;
