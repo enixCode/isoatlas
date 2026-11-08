@@ -17,7 +17,7 @@ export const Cursor = () => {
     <IsoTileArea
       from={tile}
       to={tile}
-      fill={chroma(theme.palette.primary.main).alpha(0.5).css()}
+      fill={chroma(theme.palette.primary.main).alpha(0.2).css()}
       cornerRadius={10 * zoom}
     />
   );
