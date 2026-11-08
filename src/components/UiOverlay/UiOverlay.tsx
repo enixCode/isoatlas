@@ -138,10 +138,10 @@ export const UiOverlay = () => {
           <Box
             sx={{
               position: 'absolute',
-              transform: 'translateX(-100%)'
+              transform: 'translateX(-50%)'
             }}
             style={{
-              left: rendererSize.width - appPadding.x,
+              left: rendererSize.width / 2,
               top: appPadding.y
             }}
           >
