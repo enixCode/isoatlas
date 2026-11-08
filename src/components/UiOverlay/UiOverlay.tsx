@@ -16,6 +16,7 @@ import { ContextMenuManager } from 'src/components/ContextMenu/ContextMenuManage
 import { useScene } from 'src/hooks/useScene';
 import { useModelStore } from 'src/stores/modelStore';
 import { ExportImageDialog } from '../ExportImageDialog/ExportImageDialog';
+import { ShortcutsDialog } from '../ShortcutsDialog/ShortcutsDialog';
 import { EditableText } from './EditableText';
 
 type Tool =
@@ -245,6 +246,14 @@ export const UiOverlay = () => {
         <SceneLayer>
           <DragAndDrop iconId={mode.id} tile={mouse.position.tile} />
         </SceneLayer>
+      )}
+
+      {dialog === 'SHORTCUTS' && (
+        <ShortcutsDialog
+          onClose={() => {
+            return uiStateActions.setDialog(null);
+          }}
+        />
       )}
 
       {dialog === 'EXPORT_IMAGE' && (

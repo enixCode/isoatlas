@@ -8,7 +8,9 @@ import {
   FolderOpen as FolderOpenIcon,
   DeleteOutlined as DeleteOutlineIcon,
   GridOn as GridOnIcon,
-  GridOff as GridOffIcon
+  GridOff as GridOffIcon,
+  KeyboardOutlined as KeyboardIcon,
+  MenuBookOutlined as DocsIcon
 } from '@mui/icons-material';
 import { UiElement } from 'src/components/UiElement/UiElement';
 import { IconButton } from 'src/components/IconButton/IconButton';
@@ -93,6 +95,11 @@ export const MainMenu = () => {
     uiStateActions.setIsMainMenuOpen(false);
   }, [uiStateActions, showGrid]);
 
+  const onShowShortcuts = useCallback(() => {
+    uiStateActions.setIsMainMenuOpen(false);
+    uiStateActions.setDialog('SHORTCUTS');
+  }, [uiStateActions]);
+
   const { clear } = initialDataManager;
 
   const onClearCanvas = useCallback(() => {
@@ -109,7 +116,7 @@ export const MainMenu = () => {
       ),
       links: Boolean(
         mainMenuOptions.find((opt) => {
-          return opt.includes('LINK');
+          return opt.includes('LINK') || opt.includes('HELP');
         })
       ),
       version: Boolean(mainMenuOptions.includes('VERSION'))
@@ -180,6 +187,23 @@ export const MainMenu = () => {
           {sectionVisibility.links && (
             <>
               <Divider />
+
+              {mainMenuOptions.includes('HELP.SHORTCUTS') && (
+                <MenuItem onClick={onShowShortcuts} Icon={<KeyboardIcon />}>
+                  Keyboard shortcuts
+                </MenuItem>
+              )}
+
+              {mainMenuOptions.includes('LINK.DOCS') && (
+                <MenuItem
+                  onClick={() => {
+                    return gotoUrl('https://isoatlas.dev/docs/');
+                  }}
+                  Icon={<DocsIcon />}
+                >
+                  Documentation
+                </MenuItem>
+              )}
 
               {mainMenuOptions.includes('LINK.GITHUB') && (
                 <MenuItem

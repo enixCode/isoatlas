@@ -103,6 +103,8 @@ export const MAIN_MENU_OPTIONS: MainMenuOptions = [
   'EXPORT.PNG',
   'ACTION.TOGGLE_GRID',
   'ACTION.CLEAR_CANVAS',
+  'HELP.SHORTCUTS',
+  'LINK.DOCS',
   'LINK.GITHUB',
   'VERSION'
 ];
