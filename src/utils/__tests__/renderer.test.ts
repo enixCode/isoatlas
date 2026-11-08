@@ -1,7 +1,12 @@
 import { Coords, Size, Scroll } from 'src/types';
 import { CoordsUtils, SizeUtils } from 'src/utils';
 import { PROJECTED_TILE_SIZE } from 'src/config';
-import { getGridSubset, isWithinBounds, screenToIso } from '../renderer';
+import {
+  getGridSubset,
+  isBoundsOutOfViewport,
+  isWithinBounds,
+  screenToIso
+} from '../renderer';
 
 const getRendererSize = (tileSize: Size, zoom: number = 1): Size => {
   const projectedTileSize = SizeUtils.multiply(PROJECTED_TILE_SIZE, zoom);
@@ -123,5 +128,54 @@ describe('Tests renderer utils', () => {
     });
 
     expect(tile).toEqual({ x: 0, y: 10 });
+  });
+});
+
+describe('isBoundsOutOfViewport()', () => {
+  const rendererSize = { width: 1000, height: 800 };
+  const bounds = { x: -100, y: -50, width: 200, height: 100 };
+
+  test('is false when the bounds sit in the middle of the screen', () => {
+    expect(
+      isBoundsOutOfViewport({
+        bounds,
+        zoom: 1,
+        scroll: CoordsUtils.zero(),
+        rendererSize
+      })
+    ).toBe(false);
+  });
+
+  test('is false while part of the bounds is still on screen', () => {
+    expect(
+      isBoundsOutOfViewport({
+        bounds,
+        zoom: 1,
+        scroll: { x: 550, y: 0 },
+        rendererSize
+      })
+    ).toBe(false);
+  });
+
+  test('is true once the bounds have fully left the screen', () => {
+    expect(
+      isBoundsOutOfViewport({
+        bounds,
+        zoom: 1,
+        scroll: { x: 650, y: 0 },
+        rendererSize
+      })
+    ).toBe(true);
+  });
+
+  test('takes the zoom into account', () => {
+    expect(
+      isBoundsOutOfViewport({
+        bounds,
+        zoom: 2,
+        scroll: { x: 650, y: 0 },
+        rendererSize
+      })
+    ).toBe(false);
   });
 });

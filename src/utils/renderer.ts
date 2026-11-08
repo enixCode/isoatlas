@@ -748,3 +748,29 @@ export const getFitToViewParams = (view: View, viewportSize: Size) => {
     scroll
   };
 };
+
+interface IsBoundsOutOfViewport {
+  bounds: Size & Coords;
+  zoom: number;
+  scroll: Coords;
+  rendererSize: Size;
+}
+
+// True when unprojected bounds (as from getUnprojectedBounds) do not touch the
+// viewport at all. Same transform as SceneLayer: centre + scroll + p * zoom.
+export const isBoundsOutOfViewport = ({
+  bounds,
+  zoom,
+  scroll,
+  rendererSize
+}: IsBoundsOutOfViewport) => {
+  const left = rendererSize.width / 2 + scroll.x + bounds.x * zoom;
+  const top = rendererSize.height / 2 + scroll.y + bounds.y * zoom;
+
+  return (
+    left > rendererSize.width ||
+    top > rendererSize.height ||
+    left + bounds.width * zoom < 0 ||
+    top + bounds.height * zoom < 0
+  );
+};

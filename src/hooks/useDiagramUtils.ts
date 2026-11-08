@@ -43,6 +43,7 @@ export const useDiagramUtils = () => {
   return {
     getUnprojectedBounds,
     fitToView,
-    getFitToViewParams
+    getFitToViewParams,
+    rendererSize
   };
 };
