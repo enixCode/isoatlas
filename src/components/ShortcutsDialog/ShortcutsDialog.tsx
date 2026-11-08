@@ -10,11 +10,12 @@ import {
   Typography
 } from '@mui/material';
 
-// Only what the editor really handles: keep in sync with useCopyPaste and
-// useInteractionManager.
+// Only what the editor really handles: keep in sync with useCopyPaste,
+// useDeleteKey and useInteractionManager.
 const SHORTCUTS = [
   ['Ctrl / ⌘ + C', 'Copy the selected element'],
   ['Ctrl / ⌘ + V', 'Paste it under the mouse'],
+  ['Delete', 'Delete the selected element'],
   ['Wheel', 'Pan up and down'],
   ['Shift + wheel', 'Pan sideways'],
   ['Ctrl / ⌘ + wheel, or pinch', 'Zoom'],

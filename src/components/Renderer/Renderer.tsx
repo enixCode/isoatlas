@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useInteractionManager } from 'src/interaction/useInteractionManager';
 import { useCopyPaste } from 'src/interaction/useCopyPaste';
+import { useDeleteKey } from 'src/interaction/useDeleteKey';
 import { Grid } from 'src/components/Grid/Grid';
 import { Nodes } from 'src/components/SceneLayers/Nodes/Nodes';
 import { Rectangles } from 'src/components/SceneLayers/Rectangles/Rectangles';
@@ -26,6 +27,7 @@ export const Renderer = ({ showGrid, backgroundColor }: RendererProps) => {
   });
   const { setInteractionsElement } = useInteractionManager();
   useCopyPaste();
+  useDeleteKey();
   const { items, rectangles, connectors, textBoxes } = useScene();
 
   useEffect(() => {
