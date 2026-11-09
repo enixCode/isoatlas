@@ -99,3 +99,14 @@ export function getItemByIndexOrThrow<T>(items: T[], index: number): T {
 
   return item;
 }
+
+// A key typed in a text field (item name, markdown editor) is left to the
+// field: shortcuts and copy / paste only act on the canvas.
+export const isTextField = (target: EventTarget | null) => {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable ||
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA')
+  );
+};

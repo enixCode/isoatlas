@@ -2,23 +2,13 @@ import { useEffect } from 'react';
 import { useModelStore } from 'src/stores/modelStore';
 import { useUiStateStore } from 'src/stores/uiStateStore';
 import { useScene } from 'src/hooks/useScene';
-import { generateId, getItemByIdOrThrow } from 'src/utils';
+import { generateId, getItemByIdOrThrow, isTextField } from 'src/utils';
 import {
   CLIPBOARD_TYPE,
   ClipboardContent,
   parseClipboard,
   placeClipboardContent
 } from 'src/utils/clipboard';
-
-// A copy or paste inside a text field (item name, markdown editor) stays native.
-const isTextField = (target: EventTarget | null) => {
-  return (
-    target instanceof HTMLElement &&
-    (target.isContentEditable ||
-      target.tagName === 'INPUT' ||
-      target.tagName === 'TEXTAREA')
-  );
-};
 
 // An optional reference (icon, colour) must exist in the diagram it lands in.
 const isKnownRef = (list: { id: string }[], ref?: string) => {
