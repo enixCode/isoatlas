@@ -21,13 +21,12 @@ development stopped in 2024. It is maintained independently and is **not affilia
 nor endorsed by, the authors of Isoflow**. The original work is distributed under the MIT
 license, which this fork preserves.
 
-The fork exists to keep the project alive: dependencies are kept current, security issues
-are addressed, and new features are welcome.
-
 ## Key features
-- **Drag-and-drop editor** - Express your architecture with icons, regions and connectors.
-- **Extensible icon system** - Create your own icon library, or use plugins for existing libraries including AWS, Azure, GCP, Kubernetes, and more.
-- **Export options** - Export diagrams as code or images.
+- **Isometric editor**: place icons, regions, connectors and text on a grid, snapped to a quarter of a tile.
+- **Copy and paste**: Ctrl/⌘ + C / V on any element, even between two tabs.
+- **Extensible icon system**: bring your own icon library, or use the packs for AWS, Azure, GCP, Kubernetes and more.
+- **Export**: save a diagram as JSON and open it again, or export it as a PNG image.
+- **Embeddable**: one React component, editable or read-only, that hands the model back on every change.
 
 ## Quick start
 
